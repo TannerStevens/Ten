@@ -35,6 +35,8 @@ private:
 	Matrix *board;
 	Piece Pieces[7];
 	int w, h;
+
+	void rowCleared(int r);
 public:
 	TetrisSim();
 	TetrisSim(int w, int h);

@@ -112,69 +112,96 @@ int TetrisSim::addPiece(int t, int i, int j){
 
 	if (j + tP->getWidth() > board->getWidth()) return 0; // Failed Placement
 
+	int w = board->getWidth();
 	int h = board->getHeight();
-	int c=0; //Where the Lower Left corner will be placed on the Y Axis
-	for (c = 0; c < h-1; c++){
-		for (int k = 0; k < tP->getWidth(); k++){
-			if (tP->getValueAt(tP->getHeight() - 1, k) == 0)break;
-			if (board->matrix[c*board->getWidth() + j + k] != 0) { 
-				c--;
-				goto stop;
-			}//matrix[row*width + col]
+	int tH = tP->getHeight();
+	int tW = tP->getWidth();
+
+	int ly = h; //Y level of the Lowest Part of a Piece
+	int looking = true;
+	while (looking){
+		if (--ly < 0) return 0;
+		for (int s = 0; s < tH && looking; s++){
+			for (int t = 0; t < tW && looking; t++){
+				if (tP->getValueAt(tH - 1 - s, t) + board->getValueAt(ly - s, t + j) > 1)goto next;
+				else if (s == tH - 1 && t == tW - 1) looking = false;
+			}
+		}
+		next:;
+	}
+	for (int s = 0; s < tH; s++){
+		for (int t = 0; t < tW; t++){
+			board->addtoValueAt(ly - s, t + j, tP->getValueAt(tH - 1 - s, t));
 		}
 	}
-	stop:
 
-	int zeroes = 0;
-	for (int k = tP->getHeight()-1; k >= 0; k--){
-		if (tP->getValueAt(0, k) == 1)break;
-		c--;
-		zeroes++;
-	}
-
-	if (c + zeroes > board->getHeight()) return 0; //Failed Placement
-
-	for (int Col = 0; Col < tP->getWidth(); Col++){
-		for (int Row = 0; Row < tP->getHeight(); Row++){
-			board->addtoValueAt(c - Row, j + Col, tP->getValueAt( (tP->getHeight() - 1) - Row, Col));
-			if (board->getValueAt(c - Row, j + Col) > 1) return 0; //Failed Placement
+	int score = 0;
+	int rowc = 0;
+	for (int s = 0; s < tH; s++){
+		for (int t = 0; t < w; t++){
+			rowc+=board->getValueAt(ly - s, t);
 		}
+		if (rowc == w){ 
+			score += 10; 
+			rowCleared(ly - s);
+			s--; tH--;
+		}
+		rowc = 0;
 	}
+
 	board->display();
+	return score > 0 ? score : 1;
+}
+
+void TetrisSim::rowCleared(int r){
+	for (int s = r; s >= 1; s--){
+		for (int t = 0; t < board->width; t++){
+			board->setValueAt(s, t, board->getValueAt(s-1, t));
+		}
+	}
 }
 /*0
+00-03
 {{1,1},
 {1,1}}
 */
 
 /*1
+10
 {{0,1},
 {0,1},
 {1,1}}
 
+11
 {{1,1,1},
 {0,0,1}}
 
+12
 {{1,1},
 {1,0},
 {1,0}}
 
+13
 {{1,0,0},
 {1,1,1}}
 */
 
 /*2
+20
 {{1,0},
 {1,0},
 {1,1}}
 
+21
 {{0,0,1},
 {1,1,1}}
 
+22
 {{1,1},
 {0,1},
 {0,1}}
 
+23
 {{1,1,1},
 {1,0,0}}
 */
