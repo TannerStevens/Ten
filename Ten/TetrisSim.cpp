@@ -23,9 +23,11 @@ void Matrix::addtoValueAt(int row, int col, int value){
 }
 
 void Matrix::display(){
+	printf("\n  ");
+	for (int i = 0; i < width; i++){ printf(" %i", i); }
 	printf("\n");
 	for (int m = 0; m < height; m++){
-		printf("\n");
+		printf("\n%i ",m);
 		for (int n = 0; n < width; n++){
 			printf(" %i", matrix[m*width + n]);
 		}
@@ -39,7 +41,7 @@ Piece::Piece(Matrix *r0, Matrix *r1, Matrix *r2, Matrix *r3){
 	Mrot1 = r1;
 	Mrot2 = r2;
 	Mrot3 = r3;
-};
+}
 
 Matrix* Piece::getPieceMatrix(int i){
 	switch (i){
@@ -54,6 +56,7 @@ Matrix* Piece::getPieceMatrix(int i){
 	}
 }
 
+TetrisSim::TetrisSim(){};
 TetrisSim::TetrisSim(int w, int h){
 	board = new Matrix(w, h);
 	
@@ -106,11 +109,22 @@ TetrisSim::TetrisSim(int w, int h){
 int TetrisSim::addPiece(int t, int i, int j){
 	Matrix *tP = Pieces[t].getPieceMatrix(i);
 	tP->display();
+
+	if (j + tP->getWidth() > board->getWidth()) return 0; // Failed Placement
+
 	int h = board->getHeight();
-	int c; //Where the Lower Left corner will be placed on the Y Axis
+	int c=0; //Where the Lower Left corner will be placed on the Y Axis
 	for (c = 0; c < h-1; c++){
-		if (board->matrix[c*board->getWidth() + j] != 0) { c--; break; }//matrix[row*width + col]
+		for (int k = 0; k < tP->getWidth(); k++){
+			if (tP->getValueAt(tP->getHeight() - 1, k) == 0)break;
+			if (board->matrix[c*board->getWidth() + j + k] != 0) { 
+				c--;
+				goto stop;
+			}//matrix[row*width + col]
+		}
 	}
+	stop:
+
 	int zeroes = 0;
 	for (int k = tP->getHeight()-1; k >= 0; k--){
 		if (tP->getValueAt(0, k) == 1)break;
@@ -119,7 +133,6 @@ int TetrisSim::addPiece(int t, int i, int j){
 	}
 
 	if (c + zeroes > board->getHeight()) return 0; //Failed Placement
-	if (j + tP->getWidth() > board->getWidth()) return 0; // Failed Placement
 
 	for (int Col = 0; Col < tP->getWidth(); Col++){
 		for (int Row = 0; Row < tP->getHeight(); Row++){

@@ -36,6 +36,7 @@ private:
 	Piece Pieces[7];
 	int w, h;
 public:
+	TetrisSim();
 	TetrisSim(int w, int h);
 
 	/*t=Type i=Rotation j=X Location*/
