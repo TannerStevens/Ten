@@ -81,10 +81,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Genetics.cpp" />
     <ClCompile Include="TenMain.cpp" />
     <ClCompile Include="TetrisSim.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Genetics_H.h" />
     <ClInclude Include="TetrisSim_H.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
