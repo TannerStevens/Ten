@@ -3,6 +3,9 @@
 
 #include <malloc.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include "Random.h"
 
 class Matrix{
 public:
@@ -34,15 +37,25 @@ class TetrisSim{
 private:
 	Matrix *board;
 	Piece Pieces[7];
-	int w, h;
+	int w, h, currentPiece, nPieces;
+	int* pieceOrder;
 
 	void rowCleared(int r);
 public:
 	TetrisSim();
 	TetrisSim(int w, int h);
 
+	int getPieceOrder();
+	int getNextPiece();
+
+	int getBoardWidth();
+	int getBoardHeight();
+
 	/*t=Type i=Rotation j=X Location*/
+	int addPiece(int i, int j);
 	int addPiece(int t, int i, int j);
+
+	void resetSim();
 };
 
 #endif

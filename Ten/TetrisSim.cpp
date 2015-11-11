@@ -58,6 +58,7 @@ Matrix* Piece::getPieceMatrix(int i){
 
 TetrisSim::TetrisSim(){};
 TetrisSim::TetrisSim(int w, int h){
+	this->w = w; this->h = h;
 	board = new Matrix(w, h);
 	
 	Pieces[0] = *new Piece(
@@ -103,12 +104,31 @@ TetrisSim::TetrisSim(int w, int h){
 		new Matrix(2, 3, new int[6]{0, 1, 1, 1, 0, 1}),
 		new Matrix(3, 2, new int[6]{1, 1, 1, 0, 1, 0})
 		);
+
+	srand(time(NULL));
+	nPieces = rand() % 20;
+	pieceOrder = (int *)calloc(nPieces, sizeof(int));
+	for (int i = 0; i < nPieces; i++){
+		Random r = *new Random(time(NULL));
+		pieceOrder[i] = r.Next(6);
+	}
 }
 
+int TetrisSim::getPieceOrder(){ return *pieceOrder; }
+int TetrisSim::getNextPiece(){ 
+	if (currentPiece >= nPieces)return -1;
+	return pieceOrder[currentPiece + 1]; 
+}
+int TetrisSim::getBoardWidth(){ return board->getWidth(); }
+int TetrisSim::getBoardHeight(){ return board->getHeight(); }
+
+int TetrisSim::addPiece(int i, int j){
+	if (currentPiece >= nPieces)return 0;
+	return addPiece(pieceOrder[currentPiece++], i, j);
+}
 /*t=Type i=Rotation j=X Location*/
 int TetrisSim::addPiece(int t, int i, int j){
 	Matrix *tP = Pieces[t].getPieceMatrix(i);
-	tP->display();
 
 	if (j + tP->getWidth() > board->getWidth()) return 0; // Failed Placement
 
@@ -148,8 +168,6 @@ int TetrisSim::addPiece(int t, int i, int j){
 		}
 		rowc = 0;
 	}
-
-	board->display();
 	return score > 0 ? score : 1;
 }
 
@@ -159,6 +177,11 @@ void TetrisSim::rowCleared(int r){
 			board->setValueAt(s, t, board->getValueAt(s-1, t));
 		}
 	}
+}
+
+void TetrisSim::resetSim(){
+	board = new Matrix(w, h);
+	currentPiece = 0;
 }
 
 

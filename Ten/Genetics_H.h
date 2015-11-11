@@ -3,22 +3,36 @@
 
 #include "TetrisSim_H.h"
 
+class DNA;
+class Player;
+
 //Main Driver of the Genetic Algorithm, will be 'slotting' different DNA into player
 class Player{
 private:
 	TetrisSim *ts;
-	int *po;
+	int genSize, generations;
+	DNA *currentGen;
 public:
-	Player(TetrisSim *t);
+	Player(TetrisSim *t); //"Random" but capped Generation Size
+	Player(TetrisSim *t, int n); //n Generation Size
 
-	void getPieceOrder();
+	void evaluate();
+	void reproduce(DNA *hs);
 };
 
 class DNA{
 private:
-	int gene;
+	int score, rotationGene, positionGene;
 public:
-	DNA(int gSeed);
+	DNA();
+	DNA(int geneSeed);
+	DNA(int rotationGene, int positionGene);
+
+	int getRotationGene();
+	int getPositionGene();
+	void addToScore(int s);
+	int getScore();
+	void setScore(int s);
 };
 
 #endif

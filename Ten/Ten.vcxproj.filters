@@ -24,12 +24,21 @@
     <ClCompile Include="Genetics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Random.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TetrisSim_H.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Genetics_H.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IRandom.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Random.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
