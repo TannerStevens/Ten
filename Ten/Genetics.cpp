@@ -20,18 +20,19 @@ void Player::evaluate(){
 	for (int c = 0; c < genSize; c++){
 		ts->resetSim();
 		int result=0;
-		Random r = *new Random(currentGen[c].getRotationGene());
-		Random p = *new Random(currentGen[c].getPositionGene());
+		Random *r = new Random(currentGen[c].getRotationGene());
+		Random *p = new Random(currentGen[c].getPositionGene());
 		do{
 			int i, j;
-			i = r.Next(3);
-			j = p.Next(ts->getBoardWidth() - 1);
+			i = r->Next(3);
+			j = p->Next(ts->getBoardWidth() - 1);
 			result = ts->addPiece(i, j);
 			currentGen[c].addToScore(result);
 			printf("\n %i", currentGen[c].getScore());
 		} while (result != 0);
 		if (currentGen[c].getScore() > highscore->getScore())highscore = &currentGen[c];
 		printf("\n----------------\n%i\n----------------\n", currentGen[c].getScore());
+		delete r;delete p;
 	}
 	printf("\nHighest Gen Score: %i\n", highscore->getScore());
 	reproduce(highscore);
@@ -59,8 +60,8 @@ void Player::reproduce(DNA *hs){
 	}
 }
 
-DNA::DNA(){ Random r = *new Random(); rotationGene = r.Next(); positionGene = r.Next(); score = 0; }
-DNA::DNA(int geneSeed){ Random r = *new Random(geneSeed); rotationGene = r.Next(); positionGene = r.Next(); score = 0; }
+DNA::DNA(){ Random *r = new Random(); rotationGene = r->Next(); positionGene = r->Next(); score = 0; delete r; }
+DNA::DNA(int geneSeed){ Random *r = new Random(geneSeed); rotationGene = r->Next(); positionGene = r->Next(); score = 0; delete r; }
 DNA::DNA(int rotationGene, int positionGene){ this->rotationGene = rotationGene; this->positionGene = positionGene; score = 0; }
 int DNA::getRotationGene(){ return rotationGene; }
 int DNA::getPositionGene(){ return positionGene; }

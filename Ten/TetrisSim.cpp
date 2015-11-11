@@ -108,10 +108,12 @@ TetrisSim::TetrisSim(int w, int h){
 	srand(time(NULL));
 	nPieces = rand() % 20;
 	pieceOrder = (int *)calloc(nPieces, sizeof(int));
+	Random *r = new Random(time(NULL));
 	for (int i = 0; i < nPieces; i++){
-		Random r = *new Random(time(NULL));
-		pieceOrder[i] = r.Next(6);
+		pieceOrder[i] = r->Next(6);
+
 	}
+	delete r;
 }
 
 int TetrisSim::getPieceOrder(){ return *pieceOrder; }
@@ -180,6 +182,7 @@ void TetrisSim::rowCleared(int r){
 }
 
 void TetrisSim::resetSim(){
+	delete board;
 	board = new Matrix(w, h);
 	currentPiece = 0;
 }
