@@ -8,6 +8,9 @@ Matrix::Matrix(int w, int h, int* m){
 	matrix = m;
 	height = h; width = w;
 }
+Matrix::~Matrix(){
+	if (matrix) delete matrix;
+}
 
 int Matrix::getWidth(){ return width; }
 int Matrix::getHeight(){ return height; }
@@ -16,10 +19,10 @@ int Matrix::getValueAt(int row, int col){
 	return matrix[row*width + col];
 }
 void Matrix::setValueAt(int row, int col, int value){
-	matrix[row*width + col] = value;
+	if (row*width + col >= 0) matrix[row*width + col] = value;
 }
 void Matrix::addtoValueAt(int row, int col, int value){
-	matrix[row*width + col] += value;
+	if (row*width + col >= 0) matrix[row*width + col] += value;
 }
 
 void Matrix::display(){
@@ -105,10 +108,9 @@ TetrisSim::TetrisSim(int w, int h){
 		new Matrix(3, 2, new int[6]{1, 1, 1, 0, 1, 0})
 		);
 
-	srand(time(NULL));
-	nPieces = rand() % 20;
-	pieceOrder = (int *)calloc(nPieces, sizeof(int));
 	Random *r = new Random(time(NULL));
+	nPieces = r->Next(10, 100);
+	pieceOrder = (int *)calloc(nPieces, sizeof(int));
 	for (int i = 0; i < nPieces; i++){
 		pieceOrder[i] = r->Next(6);
 

@@ -14,6 +14,7 @@ public:
 
 	Matrix(int w, int h);
 	Matrix(int w, int h, int* m);
+	~Matrix();
 
 	int getWidth();
 	int getHeight();

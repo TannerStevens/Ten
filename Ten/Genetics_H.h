@@ -11,13 +11,13 @@ class Player{
 private:
 	TetrisSim *ts;
 	int genSize, generations;
-	DNA *currentGen;
+	DNA *currentGen, *highscore;
 public:
 	Player(TetrisSim *t); //"Random" but capped Generation Size
 	Player(TetrisSim *t, int n); //n Generation Size
 
 	void evaluate();
-	void reproduce(DNA *hs);
+	void reproduce();
 };
 
 class DNA{

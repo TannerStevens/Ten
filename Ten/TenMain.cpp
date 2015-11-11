@@ -5,5 +5,6 @@
 void main(int argc, char** argv){
 	Player play = Player(new TetrisSim(10, 10));
 	
+	printf("Game Over.");
 	getchar(); getchar();
 }
