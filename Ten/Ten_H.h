@@ -16,6 +16,7 @@ public:
 
 	void setPos(GLfloat x, GLfloat y, GLfloat z);
 	GLfloat* getPos(); 
+	GLfloat* getCPos();
 	//Right most x Coordinate
 	GLfloat getRX();
 	//Top most y Coordinate
@@ -34,8 +35,15 @@ static GLint width, height;
 static GLfloat LR = -3.0;
 
 //Redraw the Board
+void updatePiece(int c);
 void updateBoard();
+int rayIntersectsSphere(GLfloat* p, GLfloat* d, GLfloat r, GLfloat* c);
+void pauseHandler(int r);
 
+void inspectionDisplay(void);
+void inspectionKeyboard(unsigned char key, int x, int y);
+
+void mouse(int button, int state, int x, int y);
 void keyboard(unsigned char key, int x, int y);
 void idle();
 void display(void);

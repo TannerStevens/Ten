@@ -7,6 +7,7 @@ void main(int argc, char** argv){
 	glutReshapeFunc(reshape);
 	glutVisibilityFunc(visible);
 	glutKeyboardFunc(keyboard);
+	glutMouseFunc(mouse);
 	glutIdleFunc(idle);
 	glutMainLoop();
 

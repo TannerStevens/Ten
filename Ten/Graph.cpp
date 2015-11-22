@@ -54,26 +54,28 @@ void Graph::prunePoints(){
 
 void Graph::drawGraph(){
 	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+	glPushMatrix();
+		glLoadIdentity();
 
-	glTranslated(-.5, -.5, 0);
-	GLdouble sX = 1 / ((GLdouble)mX + 1);
-	GLdouble sY = 1 / ((GLdouble)mY + 1);
-	glScaled(sX, sY, 1);
+		glTranslated(-.5, -.5, 0);
+		GLdouble sX = 1 / ((GLdouble)mX + 1);
+		GLdouble sY = 1 / ((GLdouble)mY + 1);
+		glScaled(sX, sY, 1);
 
-	glColor3f(0, 0, 0);
-	glBegin(GL_LINES);
-		glVertex2i(lX, 0);
-		glVertex2i(mX, 0);
+		glColor3f(0, 0, 0);
+		glBegin(GL_LINES);
+			glVertex2i(lX, 0);
+			glVertex2i(mX, 0);
 
-		glVertex2i(0, lY);
-		glVertex2i(0, mY);
-	glEnd();
+			glVertex2i(0, lY);
+			glVertex2i(0, mY);
+		glEnd();
 
-	glBegin(GL_LINE_STRIP);
-		glVertex2i(0, 0);
-		for (std::list<Point>::iterator cPoint = points.begin(); cPoint != points.end(); ++cPoint){
-			glVertex2iv(cPoint->getPoint());
-		}
-	glEnd();
+		glBegin(GL_LINE_STRIP);
+			glVertex2i(0, 0);
+			for (std::list<Point>::iterator cPoint = points.begin(); cPoint != points.end(); ++cPoint){
+				glVertex2iv(cPoint->getPoint());
+			}
+		glEnd();
+	glPopMatrix();
 }
