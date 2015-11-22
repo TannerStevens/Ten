@@ -82,15 +82,21 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Genetics.cpp" />
+    <ClCompile Include="Graph.cpp" />
     <ClCompile Include="Random.cpp" />
+    <ClCompile Include="TenImplementation.cpp" />
     <ClCompile Include="TenMain.cpp" />
     <ClCompile Include="TetrisSim.cpp" />
+    <ClCompile Include="VP.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Genetics_H.h" />
+    <ClInclude Include="Graph_H.h" />
     <ClInclude Include="IRandom.h" />
     <ClInclude Include="Random.h" />
+    <ClInclude Include="Ten_H.h" />
     <ClInclude Include="TetrisSim_H.h" />
+    <ClInclude Include="VP_H.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

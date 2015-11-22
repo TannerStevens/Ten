@@ -125,6 +125,13 @@ int TetrisSim::getNextPiece(){
 }
 int TetrisSim::getBoardWidth(){ return board->getWidth(); }
 int TetrisSim::getBoardHeight(){ return board->getHeight(); }
+int* TetrisSim::getBoardState(){ 
+	int* state = (int *)calloc(board->width*board->height, sizeof(int));
+	for (int i = (board->width*board->height) - 1; i >= 0; i--){
+		state[i] = board->matrix[i];
+	}
+	return state; 
+}
 
 int TetrisSim::addPiece(int i, int j){
 	if (currentPiece >= nPieces)return 0;

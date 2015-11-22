@@ -27,6 +27,15 @@
     <ClCompile Include="Random.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TenImplementation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VP.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Graph.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TetrisSim_H.h">
@@ -39,6 +48,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Random.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Ten_H.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VP_H.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Graph_H.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

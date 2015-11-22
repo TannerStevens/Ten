@@ -1,4 +1,6 @@
-#pragma once
+#ifndef IRANDOM_H
+#define IRANDOM_H
+
 #include <cstdint>
 #include <vector>
 
@@ -13,3 +15,5 @@ public:
 	virtual std::double_t NextDouble(std::double_t minValue, std::double_t maxValue) = 0;
 	virtual void NextBytes(std::vector<std::uint8_t>& buffer) = 0;
 };
+
+#endif

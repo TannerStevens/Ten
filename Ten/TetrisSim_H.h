@@ -51,6 +51,7 @@ public:
 
 	int getBoardWidth();
 	int getBoardHeight();
+	int* getBoardState();
 
 	/*t=Type i=Rotation j=X Location*/
 	int addPiece(int i, int j);

@@ -1,10 +1,14 @@
-#include "TetrisSim_H.h"
-#include "Genetics_H.h"
-#include <GL/freeglut.h>
+#include "Ten_H.h"
 
 void main(int argc, char** argv){
-	Player play = Player(new TetrisSim(10, 10));
-	
-	printf("Game Over.");
+	init_window(argc, argv);
+	other_init();
+	glutDisplayFunc(display);
+	glutReshapeFunc(reshape);
+	glutVisibilityFunc(visible);
+	glutKeyboardFunc(keyboard);
+	glutIdleFunc(idle);
+	glutMainLoop();
+
 	getchar(); getchar();
 }

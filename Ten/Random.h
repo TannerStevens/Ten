@@ -1,4 +1,6 @@
-#pragma once
+#ifndef RANDOM_H
+#define RANDOM_H
+
 #include <random>
 #include <vector>
 
@@ -18,3 +20,5 @@ public:
 	std::double_t NextDouble(std::double_t minValue, std::double_t maxValue) override;
 	void NextBytes(std::vector<std::uint8_t>& buffer) override;
 };
+
+#endif

@@ -10,9 +10,16 @@ Player::Player(TetrisSim *t){
 	for (int i = 0; i < genSize; i++){
 		currentGen[i] = *new DNA();
 	}
-	while (generations==-1 || generations-- > 0){
+	/*while (generations==-1 || generations-- > 0){
 		evaluate();
-	}
+	}*/
+}
+
+void Player::setEvalCallback(void(*callbackFunc)(int)){
+	this->evalCallback = callbackFunc;
+}
+void Player::setReprCallback(void(*callbackFunc)()){
+	this->reprCallback = callbackFunc;
 }
 
 void Player::evaluate(){
@@ -32,8 +39,10 @@ void Player::evaluate(){
 		} while (result != 0);
 		if (currentGen[c].getScore() > highscore->getScore())highscore = &currentGen[c];
 		delete r;delete p;
+		if (evalCallback) evalCallback(c);
 	}
 	printf("\nHighest Gen Score: %i\n", highscore->getScore());
+	if (!evalCallback && reprCallback) reprCallback();
 	reproduce();
 }
 
