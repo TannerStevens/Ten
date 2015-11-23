@@ -52,7 +52,7 @@ void Graph::prunePoints(){
 	points = tP;
 }
 
-void Graph::drawGraph(){
+void Graph::drawGraph(){ //Add Axis Labeling
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 		glLoadIdentity();

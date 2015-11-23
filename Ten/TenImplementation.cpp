@@ -53,9 +53,9 @@ void Poly::drawPoly(){
 	glBegin(GL_LINE_LOOP);
 		glColor3f(1, 0, 0);
 		glVertex3f(x, y, z);//Lower Left
-		glVertex3f(x, y + l + b, z);//Upper Left
-		glVertex3f(x + w + b, y + l + b, z);//Upper Right
-		glVertex3f(x + w + b, y, z);//Lower Right
+		glVertex3f(x, y + l + 2*b, z);//Upper Left
+		glVertex3f(x + w + 2*b, y + l + 2*b, z);//Upper Right
+		glVertex3f(x + w + 2*b, y, z);//Lower Right
 	glEnd();
 
 	//Draw Poly
@@ -202,6 +202,7 @@ void updatePiece(int c){
 		glLoadIdentity();
 		glScaled(1 / tx, 1 / ly, 1 / 2);
 		glTranslated(-tx, -ly, 0);
+		simVP.updateModelView();
 
 		updateC = c;
 	}
@@ -230,6 +231,7 @@ void updateBoard(){
 		glLoadIdentity();
 		glScaled(1 / tx, 1 / ly, 1 / 2);
 		glTranslated(-tx, -ly, 0);
+		simVP.updateModelView();
 
 		updateC = -1;
 	}
@@ -246,7 +248,6 @@ void display(void){
 	if (updateSim){
 		simVP.activate();
 		int c = updateC > -1 ? updateC : play->genSize;
-		glMatrixMode(GL_MODELVIEW);
 		for (int i = 0; i < c; i++){
 			polys[i].drawPoly();
 		}
@@ -264,6 +265,8 @@ void display(void){
 void mouse(int button, int state, int x, int y){
 	if (button == GLUT_LEFT_BUTTON){
 		if (state == GLUT_DOWN){
+			//** Pre-process and determine which Viewport got the Click Event, and then use
+			// the appropriate Modelview and Project Matrices
 			GLint viewport[4]; //var to hold the viewport info
 			GLdouble modelview[16]; //var to hold the modelview info
 			GLdouble projection[16]; //var to hold the projection matrix info
