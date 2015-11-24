@@ -15,13 +15,6 @@ Player::Player(TetrisSim *t){
 	}*/
 }
 
-void Player::setEvalCallback(void(*callbackFunc)(int)){
-	this->evalCallback = callbackFunc;
-}
-void Player::setReprCallback(void(*callbackFunc)()){
-	this->reprCallback = callbackFunc;
-}
-
 void Player::evaluate(){
 	highscore = &currentGen[0];
 	for (int c = 0; c < genSize; c++){
@@ -39,11 +32,30 @@ void Player::evaluate(){
 		} while (result != 0);
 		if (currentGen[c].getScore() > highscore->getScore())highscore = &currentGen[c];
 		delete r;delete p;
-		if (evalCallback) evalCallback(c);
 	}
 	printf("\nHighest Gen Score: %i\n", highscore->getScore());
-	if (!evalCallback && reprCallback) reprCallback();
 	reproduce();
+}
+
+void Player::onlyEvaluate(){
+	highscore = &currentGen[0];
+	for (int c = 0; c < genSize; c++){
+		ts->resetSim();
+		int result = 0;
+		Random *r = new Random(currentGen[c].getRotationGene());
+		Random *p = new Random(currentGen[c].getPositionGene());
+		do{
+			int i, j;
+			i = 0; j = 0;
+			i = r->Next(3);
+			j = p->Next(ts->getBoardWidth() - 1);
+			result = ts->addPiece(i, j);
+			currentGen[c].addToScore(result);
+		} while (result != 0);
+		if (currentGen[c].getScore() > highscore->getScore())highscore = &currentGen[c];
+		delete r; delete p;
+	}
+	printf("\nHighest Gen Score: %i\n", highscore->getScore());
 }
 
 void Player::reproduce(){

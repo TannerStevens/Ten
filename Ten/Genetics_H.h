@@ -13,16 +13,14 @@ private:
 public:
 	int genSize, generations;
 	DNA *currentGen, *highscore;
-	void (*evalCallback)(int) = NULL, (*reprCallback)() = NULL;
 
 	Player(){};
 	Player(TetrisSim *t); //"Random" but capped Generation Size
 	Player(TetrisSim *t, int n); //n Generation Size
 
 	void evaluate();
-	void setEvalCallback(void(*callbackFunc)(int));
+	void onlyEvaluate();
 	void reproduce();
-	void setReprCallback(void(*callbackFunc)());
 };
 
 class DNA{
