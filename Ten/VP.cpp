@@ -1,7 +1,32 @@
 #include "VP_H.h"
 
-VP::VP(){}
-VP::VP(GLint x, GLint y, GLsizei w, GLsizei h){}
+VP::VP(){
+	modelview[0] = 1;
+	modelview[5] = 1;
+	modelview[10] = 1;
+	modelview[15] = 1;
+
+	projection[0] = 1;
+	projection[5] = 1;
+	projection[10] = 1;
+	projection[15] = 1;
+}
+VP::VP(GLint x, GLint y, GLsizei w, GLsizei h){
+	this->x = x;
+	this->y = y;
+	this->w = w;
+	this->h = h;
+
+	modelview[0] = 1;
+	modelview[5] = 1;
+	modelview[10] = 1;
+	modelview[15] = 1;
+
+	projection[0] = 1;
+	projection[5] = 1;
+	projection[10] = 1;
+	projection[15] = 1;
+}
 
 void VP::setX(GLint x){ this->x = x; }
 GLint VP::getX(){ return x; }
@@ -23,12 +48,18 @@ int* VP::getV(){
 void VP::updateModelView(){
 	glGetDoublev(GL_MODELVIEW_MATRIX, this->modelview); //get the modelview info
 }
+GLdouble* VP::getModelView(){
+	return modelview;
+}
 void VP::updateProjection(){
 	glGetDoublev(GL_PROJECTION_MATRIX, this->projection); //get the projection matrix info
 }
+GLdouble* VP::getProjection(){
+	return projection;
+}
 
 void VP::activate(){ 
-	glViewport(this->x, this->y, this->w, this->h); 
+	glViewport(this->x, this->y, this->w, this->h);
 	if (display){
 		if (modelview || projection){
 			glMatrixMode(GL_PROJECTION);

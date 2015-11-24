@@ -6,6 +6,7 @@
 #include <GL/freeglut.h>
 #include "VP_H.h"
 #include "Graph_H.h"
+#include <vector>
 
 class Poly{
 private:
@@ -34,19 +35,24 @@ public:
 static GLint width, height;
 static GLfloat LR = -3.0;
 
+
+
 //Redraw the Board
 void updatePiece(int c);
 void updateBoard();
-int rayIntersectsSphere(GLfloat* p, GLfloat* d, GLfloat r, GLfloat* c);
+float rayIntersectsSphere(GLfloat* p, GLfloat* d, GLfloat r, GLfloat* c);
 void pauseHandler(int r);
 
-void inspectionDisplay(void);
-void inspectionKeyboard(unsigned char key, int x, int y);
+void display(void);
+void display_graph(void);
+void display_inspection(void);
+void keyboard_inspection(unsigned char key, int x, int y);
 
 void mouse(int button, int state, int x, int y);
+void mouse_sim(int button, int state, int x, int y);
+
 void keyboard(unsigned char key, int x, int y);
 void idle();
-void display(void);
 void visible(int state);
 void reshape(int w, int h);
 void other_init();

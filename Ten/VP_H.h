@@ -8,9 +8,11 @@ private:
 	GLint x, y;
 	GLsizei w, h;
 	GLdouble modelview[16], projection[16];
-
-	void (*display)(void) = NULL;
 public:
+	void(*display)(void) = NULL;
+	void(*mouse)(int, int, int, int) = NULL;
+	void(*keyboard)(unsigned char key, int x, int y) = NULL;
+
 	VP();
 	VP(GLint x, GLint y, GLsizei w, GLsizei h);
 
@@ -21,8 +23,9 @@ public:
 	int* getV();
 
 	void updateModelView();
+	GLdouble* getModelView();
 	void updateProjection();
-	void setDisplayFunc(void(*displayFunc)(void));
+	GLdouble* getProjection();
 
 	void activate();
 };

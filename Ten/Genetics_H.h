@@ -29,6 +29,7 @@ class DNA{
 private:
 	int score, rotationGene, positionGene;
 public:
+
 	DNA();
 	DNA(int geneSeed);
 	DNA(int rotationGene, int positionGene);

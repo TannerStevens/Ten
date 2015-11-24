@@ -74,9 +74,25 @@ void Player::reproduce(){
 	delete r;
 }
 
-DNA::DNA(){ Random *r = new Random(); rotationGene = r->Next(); positionGene = r->Next(); score = 0; delete r; }
-DNA::DNA(int geneSeed){ Random *r = new Random(geneSeed); rotationGene = r->Next(); positionGene = r->Next(); score = 0; delete r; }
-DNA::DNA(int rotationGene, int positionGene){ this->rotationGene = rotationGene; this->positionGene = positionGene; score = 0; }
+DNA::DNA(){ 
+	Random *r = new Random(); 
+	rotationGene = r->Next(); 
+	positionGene = r->Next(); 
+	score = 0; 
+	delete r; 
+}
+DNA::DNA(int geneSeed){ 
+	Random *r = new Random(geneSeed); 
+	rotationGene = r->Next(); 
+	positionGene = r->Next(); 
+	score = 0; 
+	delete r; 
+}
+DNA::DNA(int rotationGene, int positionGene){ 
+	this->rotationGene = rotationGene; 
+	this->positionGene = positionGene; 
+	score = 0; 
+}
 int DNA::getRotationGene(){ return rotationGene; }
 int DNA::getPositionGene(){ return positionGene; }
 void DNA::addToScore(int s){ score += s; }

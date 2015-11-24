@@ -25,8 +25,8 @@ GLfloat* Poly::getCPos(){
 	r[2] = z;
 	return r;
 }
-GLfloat Poly::getRX(){ return x+w+b; }
-GLfloat Poly::getTY(){ return y+l+b; }
+GLfloat Poly::getRX(){ return x+w+2*b; }
+GLfloat Poly::getTY(){ return y+l+2*b; }
 GLfloat Poly::getBZ(){ return z; }
 
 void Poly::setAttribs(GLfloat x, GLfloat y, GLfloat z, int aScore, int hScore, int bScore){
@@ -53,9 +53,9 @@ void Poly::drawPoly(){
 	glBegin(GL_LINE_LOOP);
 		glColor3f(1, 0, 0);
 		glVertex3f(x, y, z);//Lower Left
-		glVertex3f(x, y + l + 2*b, z);//Upper Left
-		glVertex3f(x + w + 2*b, y + l + 2*b, z);//Upper Right
-		glVertex3f(x + w + 2*b, y, z);//Lower Right
+		glVertex3f(x + w + (2 * b), y, z);//Lower Right
+		glVertex3f(x + w + (2 * b), y + l + (2 * b), z);//Upper Right
+		glVertex3f(x, y + l + (2 * b), z);//Upper Left
 	glEnd();
 
 	//Draw Poly
@@ -87,9 +87,11 @@ void Poly::drawPoly(){
 Player *play;
 Poly *polys;
 
-VP simVP, hsgraphVP, inspectionVP;
+std::vector<VP> vps;
 Graph hsgraph;
+
 int selected = -1;
+int ins_prog = 1;
 
 int updateC = -1;
 int updateSim = true;
@@ -125,7 +127,7 @@ template <class T> T* unitfyVector(T* v){
 	return rVector;
 }
 
-int rayIntersectsSphere(GLfloat* p, GLfloat* d, GLfloat r, GLfloat* c){
+float rayIntersectsSphere(GLfloat* p, GLfloat* d, GLfloat r, GLfloat* c){
 	float t=0;
 	glColor3f(0, 1, 0);
 	//Compute A, B and C coefficients
@@ -202,7 +204,7 @@ void updatePiece(int c){
 		glLoadIdentity();
 		glScaled(1 / tx, 1 / ly, 1 / 2);
 		glTranslated(-tx, -ly, 0);
-		simVP.updateModelView();
+		vps[0].updateModelView();
 
 		updateC = c;
 	}
@@ -216,27 +218,40 @@ void updateBoard(){
 
 	if (updateSim){
 		int size = ceil(sqrt(play->genSize)), c = -1;
-		GLfloat lx = 0, ly = 0, tx = 0;
+		GLfloat lx = 0, ly = 0, tx = 0, ty = 0;
 		for (int i = size - 1; c < play->genSize - 1 && i >= 0; --i){
+			printf("\n");
 			for (int j = 0; c < play->genSize - 1 && j < size; ++j){
 				c++;
-				polys[c].setAttribs(lx, ly, 0, play->currentGen[c].getScore(), 2, 0);
+				polys[c].setAttribs(lx, ly, 0, play->currentGen[c].getScore(), 2, 1);
+				printf(" %i", play->currentGen[c].getScore());
 				lx = polys[c].getRX();
 				tx = lx > tx ? lx : tx;
+				ty = polys[c].getTY() > ty ? polys[c].getTY() : ty;
 			}
-			ly = polys[c].getTY();
+			ly = ty;
 			lx = 0;
 		}
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 		glScaled(1 / tx, 1 / ly, 1 / 2);
 		glTranslated(-tx, -ly, 0);
-		simVP.updateModelView();
+		vps[0].updateModelView();
 
 		updateC = -1;
 	}
 
 	glutPostRedisplay();
+}
+
+void display_sim(void){
+	int c = updateC > -1 ? updateC : play->genSize;
+	for (int i = 0; i < c; i++){
+		polys[i].drawPoly();
+	}
+}
+void display_graph(void){
+	hsgraph.drawGraph();
 }
 
 void idle(){
@@ -246,42 +261,39 @@ void display(void){
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	if (updateSim){
-		simVP.activate();
-		int c = updateC > -1 ? updateC : play->genSize;
-		for (int i = 0; i < c; i++){
-			polys[i].drawPoly();
-		}
+		vps[0].activate();
 	}
 
-	hsgraphVP.activate();
-	hsgraph.drawGraph();
-
-	simVP.activate();
+	vps[1].activate();
 
 	glFlush();
 	if (updateSim) Sleep(175);
 }
 
-void mouse(int button, int state, int x, int y){
+template <class T> void printArr(T* arr, int n){
+	printf("\n");
+	for (int i = 0; i < n; i++){
+		printf(" %g", arr[i]);
+	}
+	printf("\n");
+}
+
+void mouse_sim(int button, int state, int x, int y){
 	if (button == GLUT_LEFT_BUTTON){
 		if (state == GLUT_DOWN){
 			//** Pre-process and determine which Viewport got the Click Event, and then use
 			// the appropriate Modelview and Project Matrices
-			GLint viewport[4]; //var to hold the viewport info
-			GLdouble modelview[16]; //var to hold the modelview info
-			GLdouble projection[16]; //var to hold the projection matrix info
+			GLint* viewport = vps[0].getV(); //var to hold the viewport info
+			GLdouble* modelview = vps[0].getModelView(); //var to hold the modelview info
+			modelview[10] = .5;
+			GLdouble* projection = vps[0].getProjection(); //var to hold the projection matrix info
 			GLfloat winX, winY; //variables to hold screen x,y,z coordinates
-			GLdouble worldCV[4]; //variables to hold world x,y,z coordinates
-			GLdouble worldFV[4]; //variables to hold world x,y,z coordinates
-
-			glGetDoublev(GL_MODELVIEW_MATRIX, modelview); //get the modelview info
-			modelview[10] = 1;
-			glGetDoublev(GL_PROJECTION_MATRIX, projection); //get the projection matrix info
-			glGetIntegerv(GL_VIEWPORT, viewport); //get the viewport info
+			GLdouble worldCV[3]; //variables to hold world x,y,z coordinates
+			GLdouble worldFV[3]; //variables to hold world x,y,z coordinates
 
 			winX = (float)x;
 			winY = (float)viewport[3] - (float)y;
-			
+
 			GLint r1, r2;
 			//get the world coordinates from the screen coordinates
 			r1 = gluUnProject(winX, winY, 1, modelview, projection, viewport, &worldCV[0], &worldCV[1], &worldCV[2]);
@@ -292,32 +304,59 @@ void mouse(int button, int state, int x, int y){
 			GLfloat wPos[] = { (GLfloat)worldCV[0], (GLfloat)worldCV[1], (GLfloat)worldCV[2] };
 			GLfloat* dir = unitfyVector(p2pVec<GLdouble, GLfloat>(worldCV, worldFV));
 
-			glBegin(GL_POINTS);
-				glVertex3fv(wPos);
-			glEnd();
-			glFlush();
+			glViewport(vps[0].getX(), vps[0].getY(), vps[0].getW(), vps[0].getH());
+			glMatrixMode(GL_MODELVIEW);
+			glPushMatrix();
+			glMatrixMode(GL_PROJECTION);
+			glPushMatrix();
+			
+				glBegin(GL_POINTS);
+					glVertex3dv(worldCV);
+					glVertex3dv(worldFV);
+				glEnd();
+				glFlush();
 
-			std::list< std::pair<int, int> > intersections;
+			std::list< std::pair<float, int> > intersections;
 			int c = updateC > -1 ? updateC : play->genSize;
-			for (int i = 0; i < c; i++){
+			for (int i = 0; i < c*r1*r2; i++){
 				GLfloat* pPos = polys[i].getPos();
+				printArr(pPos, 3);
 				GLfloat r = distance(p2pVec<GLfloat, GLfloat>(pPos, polys[i].getCPos()));
 
-				int d = rayIntersectsSphere(wPos, dir, r, polys[i].getCPos());
+				float d = rayIntersectsSphere(wPos, dir, r, polys[i].getCPos());
 				if (d){
+					glBegin(GL_POINTS);
+						glVertex3fv(polys[i].getCPos());
+					glEnd();
+
 					intersections.emplace_back(d, i);
-					printf("%i", d);
 				}
 			}
+
+			glMatrixMode(GL_MODELVIEW);
+			glPopMatrix();
+			glMatrixMode(GL_PROJECTION);
+			glPopMatrix();
 
 			if (intersections.size()>0){
 				pauseHandler(1);
 
 				selected = intersections.front().second;
 
-				glutDisplayFunc(inspectionDisplay);
-				glutKeyboardFunc(inspectionKeyboard);
-				glutMouseFunc(NULL);
+				vps[2].activate();
+				glutDisplayFunc(display_inspection);
+				glutKeyboardFunc(keyboard_inspection);
+			}
+		}
+	}
+}
+
+void mouse(int button, int state, int x, int y){
+	//Need to figure out how to filter 'active' VP's, ex: Inspection VP
+	for (std::vector<VP>::iterator it = vps.begin(); it != vps.end(); ++it){
+		if (x > it->getX() && x < it->getX() + it->getW()){
+			if (y > it->getY() && y < it->getY() + it->getH()){
+				if(it->mouse) it->mouse(button, state, x, y);
 			}
 		}
 	}
@@ -335,16 +374,16 @@ void pauseHandler(int r){
 	}
 }
 
-void inspectionDisplay(void){
+void display_inspection(void){
+	glClear(GL_COLOR_BUFFER_BIT);
 	printf("\n##########################################");
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 		glLoadIdentity();
-		inspectionVP.activate();
 
 		TetrisSim *ts = new TetrisSim(10, 20);
 
-		int result = 0, score = 0;
+		int result = 0, score = 0, c = 0;
 		Random *r = new Random(play->currentGen[selected].getRotationGene());
 		Random *p = new Random(play->currentGen[selected].getPositionGene());
 		do{
@@ -366,22 +405,21 @@ void inspectionDisplay(void){
 				}
 			}
 			printf("\n%i\n", score);
-		} while (result != 0);
+		} while (c++<ins_prog);
 		delete r; delete p;
 
 		delete ts;
 	glPopMatrix();
-
-	glutDisplayFunc(display);
-	glutKeyboardFunc(keyboard);
-	glutMouseFunc(mouse);
 }
 
-void inspectionKeyboard(unsigned char key, int x, int y){
+void keyboard_inspection(unsigned char key, int x, int y){
 	if (key == 'q'){
 		glutDisplayFunc(display);
 		glutKeyboardFunc(keyboard);
 		glutMouseFunc(mouse);
+	}
+	else if (key == ' '){
+		ins_prog++;
 	}
 
 	glutPostRedisplay();
@@ -407,24 +445,33 @@ void visible(int state){
 }
 
 void reshape(int w, int h){
-	simVP.setH(h);
-	simVP.setW(w*.6);
-	simVP.setX(w*.4);
-	simVP.setY(0);
+	vps[0].setH(h);
+	vps[0].setW(w*.6);
+	vps[0].setX(w*.4);
+	vps[0].setY(0);
 
-	hsgraphVP.setH(h/2);
-	hsgraphVP.setW(w*.4);
-	hsgraphVP.setX(0);
-	hsgraphVP.setY(h/2);
+	vps[1].setH(h/2);
+	vps[1].setW(w*.4);
+	vps[1].setX(0);
+	vps[1].setY(h/2);
 
-	inspectionVP.setH(h);
-	inspectionVP.setW(w);
+	vps[2].setH(h);
+	vps[2].setW(w);
 }
 
 void other_init(){
 	play = new Player(new TetrisSim(10, 20));
 	polys = (Poly *)calloc(play->genSize, sizeof(Poly));
 	play->setReprCallback(updateBoard);
+
+	vps.emplace_back(*new VP());
+	vps[0].display = display_sim;
+	vps[0].mouse = mouse_sim;
+	vps.emplace_back(*new VP());
+	vps[1].display = display_graph;
+	vps.emplace_back(*new VP());
+	vps[2].display = display_inspection;
+	vps[2].keyboard = keyboard_inspection;
 
 	glClearColor(1.0, 1.0, 1.0, 0.0);
 	//glShadeModel(GL_SMOOTH);
