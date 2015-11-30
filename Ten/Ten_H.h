@@ -4,7 +4,7 @@
 #include "TetrisSim_H.h"
 #include "Genetics_H.h"
 #include <GL/freeglut.h>
-#include "VP_H.h"
+#include "Visualizer_H.h"
 #include "Graph_H.h"
 #include <vector>
 #include "Poly_H.h"

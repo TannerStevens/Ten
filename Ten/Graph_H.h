@@ -1,3 +1,6 @@
+#ifndef GRAPH_H
+#define GRAPH_H
+
 #include <gl/freeglut.h>
 #include <list>
 
@@ -31,3 +34,5 @@ public:
 
 	void prunePoints();
 };
+
+#endif

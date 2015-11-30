@@ -10,6 +10,7 @@ Player::Player(TetrisSim *t){
 	for (int i = 0; i < genSize; i++){
 		currentGen[i] = *new DNA();
 	}
+	highscore = &currentGen[0];
 	/*while (generations==-1 || generations-- > 0){
 		evaluate();
 	}*/
@@ -33,7 +34,6 @@ void Player::evaluate(){
 		if (currentGen[c].getScore() > highscore->getScore())highscore = &currentGen[c];
 		delete r;delete p;
 	}
-	printf("\nHighest Gen Score: %i\n", highscore->getScore());
 	reproduce();
 }
 
@@ -55,7 +55,6 @@ void Player::onlyEvaluate(){
 		if (currentGen[c].getScore() > highscore->getScore())highscore = &currentGen[c];
 		delete r; delete p;
 	}
-	printf("\nHighest Gen Score: %i\n", highscore->getScore());
 }
 
 void Player::reproduce(){

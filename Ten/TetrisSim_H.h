@@ -1,5 +1,5 @@
-#ifndef TetrisSim_H
-#define TetrisSim_H
+#ifndef TETRISSIM_H
+#define TETRISSIM_H
 
 #include <malloc.h>
 #include <stdio.h>
