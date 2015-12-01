@@ -83,6 +83,7 @@
   <ItemGroup>
     <ClCompile Include="Genetics.cpp" />
     <ClCompile Include="Graph.cpp" />
+    <ClCompile Include="Inspector.cpp" />
     <ClCompile Include="Poly.cpp" />
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="TenImplementation.cpp" />
@@ -94,6 +95,7 @@
   <ItemGroup>
     <ClInclude Include="Genetics_H.h" />
     <ClInclude Include="Graph_H.h" />
+    <ClInclude Include="Inspector_H.h" />
     <ClInclude Include="IRandom.h" />
     <ClInclude Include="Poly_H.h" />
     <ClInclude Include="Random.h" />

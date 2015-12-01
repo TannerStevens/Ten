@@ -35,6 +35,31 @@ void Poly::setAttribs(GLfloat x, GLfloat y, GLfloat z, int aScore, int hScore, i
 	hScore2height(hScore);
 	bScore2border(bScore);
 }
+void Poly::setMaterials(int rGene, int pGene){
+	Random r = Random(rGene);
+	Random p = Random(pGene);
+	this->kAmb[0] = r.NextDouble(0, 1);
+	this->kAmb[1] = r.NextDouble(0, 1);
+	this->kAmb[2] = r.NextDouble(0, 1);
+	this->kAmb[3] = 1;
+
+	this->kDif[0] = p.NextDouble(0, 1);
+	this->kDif[1] = p.NextDouble(0, 1);
+	this->kDif[2] = p.NextDouble(0, 1);
+	this->kDif[3] = 1;
+
+	this->kSpec[0] = r.NextDouble(0, .5) + p.NextDouble(0, .5);
+	this->kSpec[1] = r.NextDouble(0, .5) + p.NextDouble(0, .5);
+	this->kSpec[2] = r.NextDouble(0, .5) + p.NextDouble(0, .5);
+	this->kSpec[3] = 1;
+
+	this->kE[0] = r.NextDouble(0, 1) * p.NextDouble(0, 1);
+	this->kE[1] = r.NextDouble(0, 1) * p.NextDouble(0, 1);
+	this->kE[2] = r.NextDouble(0, 1) * p.NextDouble(0, 1);
+	this->kE[3] = 1;
+
+	this->kSh = p.Next(128);
+}
 void Poly::aScore2area(int aScore){
 	GLfloat s = 0;
 	if (aScore == 0) s = 1;
@@ -50,13 +75,24 @@ void Poly::bScore2border(int bScore){
 }
 void Poly::drawPoly(){
 	//Draw Border
+	glDisable(GL_LIGHTING);
+	glDisable(GL_DEPTH_TEST);
+
 	glBegin(GL_LINE_LOOP);
-	glColor3f(1, 0, 0);
+	glColor4fv(kE);
 	glVertex3f(x, y, z);//Lower Left
 	glVertex3f(x + w + (2 * b), y, z);//Lower Right
 	glVertex3f(x + w + (2 * b), y + l + (2 * b), z);//Upper Right
 	glVertex3f(x, y + l + (2 * b), z);//Upper Left
 	glEnd();
+
+	glEnable(GL_LIGHTING);
+	glEnable(GL_DEPTH_TEST);
+	//glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, kAmb);
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, kDif);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, kSpec);
+	glMaterialfv(GL_FRONT, GL_EMISSION, kE);
+	glMaterialf(GL_FRONT, GL_SHININESS, kSh);
 
 	//Draw Poly
 	GLfloat pX = x + b, pY = y + b;

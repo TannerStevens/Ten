@@ -8,6 +8,7 @@
 #include "Graph_H.h"
 #include <vector>
 #include "Poly_H.h"
+#include "Inspector_H.h"
 
 static GLint width, height;
 static GLfloat LR = -3.0;

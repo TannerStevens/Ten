@@ -109,13 +109,14 @@ TetrisSim::TetrisSim(int w, int h){
 		);
 
 	Random *r = new Random(time(NULL));
-	nPieces = r->Next(10, 100);
+	nPieces = r->Next(100, 500);
 	pieceOrder = (int *)calloc(nPieces, sizeof(int));
 	for (int i = 0; i < nPieces; i++){
 		pieceOrder[i] = r->Next(6);
 
 	}
 	delete r;
+	currentPiece = 0;
 }
 
 int TetrisSim::getPieceOrder(){ return *pieceOrder; }

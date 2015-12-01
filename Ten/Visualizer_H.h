@@ -9,14 +9,12 @@
 
 class Visualizer{
 private:
-	std::vector<Graph> graphs; //Graph Vector
-	//List Vector
+public:
 	Poly *polys;
 	int x, y, w, h, pauseUpdates, pauseRendering, highscore;
 	GLfloat mx, my, mz;
-	std::list< std::pair<int, int> > extras;
 	Player play;
-public:
+
 	Visualizer(int x, int y, int w, int h, Player play);
 
 	void update();
@@ -25,9 +23,9 @@ public:
 	void keyboard(unsigned char key, int x, int y);
 	void mouse(int button, int state, int x, int y);
 
-	void addExtra(int type, int stat);
-	void updateExtra_highscore();
 	void pauseHandler(int r);
 };
+
+float rayIntersectsSphere(GLfloat* p, GLfloat* d, GLfloat r, GLfloat* c);
 
 #endif
