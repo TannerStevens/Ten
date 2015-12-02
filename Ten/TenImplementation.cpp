@@ -2,6 +2,10 @@
 
 std::list<Visualizer> visualizers;
 
+int POsetting = 0; //0=Seed, 1=poFileName
+int poSeed;
+char* poFileName;
+
 void idle(){
 	for (std::list<Visualizer>::iterator it = visualizers.begin(); it != visualizers.end(); ++it){
 		it->update();
@@ -21,8 +25,6 @@ void display(void){
 
 void mouse(int button, int state, int x, int y){
 	int vY = height - y;
-	printf("\n%i %i", x, vY);
-	//y check is flipped since VP y's are upside down/backwards/flipped.
 	for (std::list<Visualizer>::iterator it = visualizers.begin(); it != visualizers.end(); ++it){
 		if (x >= it->x && x <= it->x + it->w && vY >= it->y && vY <= it->y + it->h) it->mouse(button, state, x, y);
 	}
@@ -38,10 +40,36 @@ void keyboard(unsigned char key, int x, int y){
 				it->pauseHandler(-1);
 			}
 		}
+		else if (key == '+'){
+			switch (POsetting){
+				case 0:
+					visualizers.push_back(Visualizer(0, 0, width, height, Player(TetrisSim(10, 20, poSeed))));
+					break;
+				case 1:
+					visualizers.push_back(Visualizer(0, 0, width, height, Player(TetrisSim(10, 20, poFileName))));
+					break;
+			}
+			reshape(width, height);
+		}
+		else if (key == '-' && visualizers.size() > 1){
+			visualizers.pop_back();
+			reshape(width, height);
+		}
 	}
 	else{
-		for (std::list<Visualizer>::iterator it = visualizers.begin(); it != visualizers.end(); ++it){
-			if (x >= it->x && x <= it->x + it->w && vY >= it->y && vY <= it->y + it->h) it->keyboard(key, x, y);
+		if (key == 'd' && visualizers.size() > 1){
+			for (std::list<Visualizer>::iterator it = visualizers.begin(); it != visualizers.end(); ++it){
+				if (x >= it->x && x <= it->x + it->w && vY >= it->y && vY <= it->y + it->h){
+					visualizers.erase(it);
+					reshape(width, height);
+					break;
+				}
+			}
+		}
+		else {
+			for (std::list<Visualizer>::iterator it = visualizers.begin(); it != visualizers.end(); ++it){
+				if (x >= it->x && x <= it->x + it->w && vY >= it->y && vY <= it->y + it->h) it->keyboard(key, x, y);
+			}
 		}
 	}
 }
@@ -70,10 +98,9 @@ void reshape(int w, int h){
 }
 
 void other_init(){
-	visualizers.push_back(Visualizer(0, 0, width / 2, height / 2, Player(new TetrisSim(10, 20))));
-	visualizers.push_back(Visualizer(width / 2, 0, width / 2, height / 2, Player(new TetrisSim(10, 20))));
-	visualizers.push_back(Visualizer(0, height / 2, width / 2, height / 2, Player(new TetrisSim(10, 20))));
-	visualizers.push_back(Visualizer(width / 2, height / 2, width / 2, height / 2, Player(new TetrisSim(10, 20))));
+	poSeed = time(NULL);
+	initInspector(TetrisSim(10, 20, poSeed));
+	visualizers.push_back(Visualizer(0, 0, width, height, Player(TetrisSim(10, 20, poSeed))));
 
 	glClearColor(0, 0, 0, 0);
 	glShadeModel(GL_SMOOTH);
@@ -97,5 +124,5 @@ void init_window(int argc, char** argv){
 	width = height = 500;
 	glutInitWindowSize(width, height);
 	glutInitWindowPosition(50, 50);
-	int n = glutCreateWindow("Stevte01-CS321_Final_Project:TEN");
+	glutCreateWindow("Stevte01-CS321_Final_Project:TEN");
 }

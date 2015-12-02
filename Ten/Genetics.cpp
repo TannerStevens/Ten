@@ -1,11 +1,11 @@
 #include "Genetics_H.h"
 #include "Random.h"
 
-Player::Player(TetrisSim *t){
+Player::Player(TetrisSim t){
 	generations = -1;
 	ts = t;
 
-	genSize = 20;//Random(time(NULL)).Next(20);
+	genSize = 100;//Random(time(NULL)).Next(20);
 	currentGen = (DNA *)calloc(genSize, sizeof(DNA));
 	for (int i = 0; i < genSize; i++){
 		currentGen[i] = *new DNA();
@@ -19,7 +19,7 @@ Player::Player(TetrisSim *t){
 void Player::evaluate(){
 	highscore = &currentGen[0];
 	for (int c = 0; c < genSize; c++){
-		ts->resetSim();
+		ts.resetSim();
 		int result=0;
 		Random *r = new Random(currentGen[c].getRotationGene());
 		Random *p = new Random(currentGen[c].getPositionGene());
@@ -27,8 +27,8 @@ void Player::evaluate(){
 			int i, j;
 			i = 0; j = 0;
 			i = r->Next(3);
-			j = p->Next(ts->getBoardWidth() - 1);
-			result = ts->addPiece(i, j);
+			j = p->Next(ts.getBoardWidth() - 1);
+			result = ts.addPiece(i, j);
 			currentGen[c].addToScore(result);
 		} while (result != 0);
 		if (currentGen[c].getScore() > highscore->getScore())highscore = &currentGen[c];
@@ -40,7 +40,7 @@ void Player::evaluate(){
 void Player::onlyEvaluate(){
 	highscore = &currentGen[0];
 	for (int c = 0; c < genSize; c++){
-		ts->resetSim();
+		ts.resetSim();
 		int result = 0;
 		Random *r = new Random(currentGen[c].getRotationGene());
 		Random *p = new Random(currentGen[c].getPositionGene());
@@ -48,8 +48,8 @@ void Player::onlyEvaluate(){
 			int i, j;
 			i = 0; j = 0;
 			i = r->Next(3);
-			j = p->Next(ts->getBoardWidth() - 1);
-			result = ts->addPiece(i, j);
+			j = p->Next(ts.getBoardWidth() - 1);
+			result = ts.addPiece(i, j);
 			currentGen[c].addToScore(result);
 		} while (result != 0);
 		if (currentGen[c].getScore() > highscore->getScore())highscore = &currentGen[c];

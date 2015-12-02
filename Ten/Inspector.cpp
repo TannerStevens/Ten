@@ -3,16 +3,15 @@
 Inspector active;
 
 Inspector::Inspector(){}
-Inspector::Inspector(DNA cur){
-	this->ins = DNA(cur);
-	this->ts = TetrisSim(10, 20);
+Inspector::Inspector(TetrisSim ts){
+	int lWin = glutGetWindow();
+	this->ts = ts;
 	this->winID = glutCreateWindow("Inspector");
 	glutDisplayFunc(display_inspector);
 	glutKeyboardFunc(keyboard_inspector);
-
-	glClearColor(1.0, 1.0, 1.0, 0.0);
+	glClearColor(1, 1, 1, 0);
+	glutSetWindow(lWin);
 }
-
 
 void drawBitmapInteger(int in, float x, float y){
 	glColor3f(0, 0, 0);
@@ -27,6 +26,8 @@ void drawBitmapInteger(int in, float x, float y){
 }
 
 void Inspector::display(void){
+	glutSetWindow(this->winID);
+
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	glMatrixMode(GL_MODELVIEW);
@@ -76,7 +77,14 @@ void Inspector::nextStep(){
 }
 
 void Inspect(DNA cur){
-	active = Inspector(cur);
+	active.ins = cur;
+	active.step = -1;
+	active.ts.resetSim();
+	active.display();
+}
+
+void initInspector(TetrisSim ts){
+	active = Inspector(ts);
 }
 
 void display_inspector(void){

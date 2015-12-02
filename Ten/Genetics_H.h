@@ -9,14 +9,14 @@ class Player;
 //Main Driver of the Genetic Algorithm, will be 'slotting' different DNA into player
 class Player{
 private:
-	TetrisSim *ts;
+	TetrisSim ts;
 public:
 	int genSize, generations;
 	DNA *currentGen, *highscore;
 
 	Player(){};
-	Player(TetrisSim *t); //"Random" but capped Generation Size
-	Player(TetrisSim *t, int n); //n Generation Size
+	Player(TetrisSim t); //"Random" but capped Generation Size
+	Player(TetrisSim t, int n); //n Generation Size
 
 	void evaluate();
 	void onlyEvaluate();

@@ -8,14 +8,13 @@
 
 class Inspector{
 private:
-	int step = -1;
-	TetrisSim ts;
 public:
-	int winID;
+	int winID, step = -1;
+	TetrisSim ts;
 	DNA ins;
 
 	Inspector();
-	Inspector(DNA cur);
+	Inspector(TetrisSim ts);
 
 	void display(void);
 	void keyboard(unsigned char key, int x, int y);
@@ -23,6 +22,7 @@ public:
 };
 
 void Inspect(DNA cur);
+void initInspector(TetrisSim ts);
 void display_inspector(void);
 void keyboard_inspector(unsigned char key, int x, int y);
 

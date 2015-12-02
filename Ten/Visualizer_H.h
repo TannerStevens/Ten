@@ -4,6 +4,7 @@
 #include "Genetics_H.h"
 #include "Poly_H.h"
 #include "Graph_H.h"
+#include "Inspector_H.h"
 #include <list>
 #include <vector>
 

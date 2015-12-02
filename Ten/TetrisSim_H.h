@@ -38,13 +38,16 @@ class TetrisSim{
 private:
 	Matrix *board;
 	Piece Pieces[7];
-	int w, h, currentPiece, nPieces;
+	int w, h, currentPiece, nPieces, bFilePO = false;
 	int* pieceOrder;
 
 	void rowCleared(int r);
+	void parsePOFile(char* poFileName);
 public:
 	TetrisSim();
 	TetrisSim(int w, int h);
+	TetrisSim(int w, int h, char* poFileName);
+	TetrisSim(int w, int h, int poSeed);
 
 	int getPieceOrder();
 	int getNextPiece();

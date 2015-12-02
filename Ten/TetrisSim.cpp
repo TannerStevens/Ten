@@ -60,6 +60,64 @@ Matrix* Piece::getPieceMatrix(int i){
 }
 
 TetrisSim::TetrisSim(){};
+TetrisSim::TetrisSim(int w, int h, int poSeed){
+	this->w = w; this->h = h;
+	board = new Matrix(w, h);
+
+	Pieces[0] = *new Piece(
+		new Matrix(2, 2, new int[4]{1, 1, 1, 1}),
+		new Matrix(2, 2, new int[4]{1, 1, 1, 1}),
+		new Matrix(2, 2, new int[4]{1, 1, 1, 1}),
+		new Matrix(2, 2, new int[4]{1, 1, 1, 1})
+		);
+
+	Pieces[1] = *new Piece(
+		new Matrix(2, 3, new int[6]{0, 1, 0, 1, 1, 1}),
+		new Matrix(3, 2, new int[6]{1, 1, 1, 0, 0, 1}),
+		new Matrix(2, 3, new int[6]{1, 1, 1, 0, 1, 0}),
+		new Matrix(3, 2, new int[6]{1, 0, 0, 1, 1, 1})
+		);
+	Pieces[2] = *new Piece(
+		new Matrix(2, 3, new int[6]{1, 0, 1, 0, 1, 1}),
+		new Matrix(3, 2, new int[6]{0, 0, 1, 1, 1, 1}),
+		new Matrix(2, 3, new int[6]{1, 1, 0, 1, 0, 1}),
+		new Matrix(3, 2, new int[6]{1, 1, 1, 1, 0, 0})
+		);
+	Pieces[3] = *new Piece(
+		new Matrix(1, 4, new int[4]{1, 1, 1, 1}),
+		new Matrix(4, 1, new int[4]{1, 1, 1, 1}),
+		new Matrix(1, 4, new int[4]{1, 1, 1, 1}),
+		new Matrix(4, 1, new int[4]{1, 1, 1, 1})
+		);
+	Pieces[4] = *new Piece(
+		new Matrix(2, 3, new int[6]{0, 1, 1, 1, 1, 0}),
+		new Matrix(3, 2, new int[6]{1, 1, 0, 0, 1, 1}),
+		new Matrix(2, 3, new int[6]{0, 1, 1, 1, 1, 0}),
+		new Matrix(3, 2, new int[6]{1, 1, 0, 0, 1, 1})
+		);
+	Pieces[5] = *new Piece(
+		new Matrix(2, 3, new int[6]{1, 0, 1, 1, 0, 1}),
+		new Matrix(3, 2, new int[6]{0, 1, 1, 1, 1, 0}),
+		new Matrix(2, 3, new int[6]{1, 0, 1, 1, 0, 1}),
+		new Matrix(3, 2, new int[6]{0, 1, 1, 1, 1, 0})
+		);
+	Pieces[6] = *new Piece(
+		new Matrix(2, 3, new int[6]{1, 0, 1, 1, 1, 0}),
+		new Matrix(3, 2, new int[6]{0, 1, 0, 1, 1, 1}),
+		new Matrix(2, 3, new int[6]{0, 1, 1, 1, 0, 1}),
+		new Matrix(3, 2, new int[6]{1, 1, 1, 0, 1, 0})
+		);
+
+	Random *r = new Random(poSeed);
+	nPieces = r->Next(1000, 2000);
+	pieceOrder = (int *)calloc(nPieces, sizeof(int));
+	for (int i = 0; i < nPieces; i++){
+		pieceOrder[i] = r->Next(6);
+
+	}
+	delete r;
+	currentPiece = 0;
+}
 TetrisSim::TetrisSim(int w, int h){
 	this->w = w; this->h = h;
 	board = new Matrix(w, h);
@@ -116,6 +174,57 @@ TetrisSim::TetrisSim(int w, int h){
 
 	}
 	delete r;
+	currentPiece = 0;
+}
+TetrisSim::TetrisSim(int w, int h, char* poFileName){
+	this->w = w; this->h = h;
+	board = new Matrix(w, h);
+
+	Pieces[0] = *new Piece(
+		new Matrix(2, 2, new int[4]{1, 1, 1, 1}),
+		new Matrix(2, 2, new int[4]{1, 1, 1, 1}),
+		new Matrix(2, 2, new int[4]{1, 1, 1, 1}),
+		new Matrix(2, 2, new int[4]{1, 1, 1, 1})
+		);
+
+	Pieces[1] = *new Piece(
+		new Matrix(2, 3, new int[6]{0, 1, 0, 1, 1, 1}),
+		new Matrix(3, 2, new int[6]{1, 1, 1, 0, 0, 1}),
+		new Matrix(2, 3, new int[6]{1, 1, 1, 0, 1, 0}),
+		new Matrix(3, 2, new int[6]{1, 0, 0, 1, 1, 1})
+		);
+	Pieces[2] = *new Piece(
+		new Matrix(2, 3, new int[6]{1, 0, 1, 0, 1, 1}),
+		new Matrix(3, 2, new int[6]{0, 0, 1, 1, 1, 1}),
+		new Matrix(2, 3, new int[6]{1, 1, 0, 1, 0, 1}),
+		new Matrix(3, 2, new int[6]{1, 1, 1, 1, 0, 0})
+		);
+	Pieces[3] = *new Piece(
+		new Matrix(1, 4, new int[4]{1, 1, 1, 1}),
+		new Matrix(4, 1, new int[4]{1, 1, 1, 1}),
+		new Matrix(1, 4, new int[4]{1, 1, 1, 1}),
+		new Matrix(4, 1, new int[4]{1, 1, 1, 1})
+		);
+	Pieces[4] = *new Piece(
+		new Matrix(2, 3, new int[6]{0, 1, 1, 1, 1, 0}),
+		new Matrix(3, 2, new int[6]{1, 1, 0, 0, 1, 1}),
+		new Matrix(2, 3, new int[6]{0, 1, 1, 1, 1, 0}),
+		new Matrix(3, 2, new int[6]{1, 1, 0, 0, 1, 1})
+		);
+	Pieces[5] = *new Piece(
+		new Matrix(2, 3, new int[6]{1, 0, 1, 1, 0, 1}),
+		new Matrix(3, 2, new int[6]{0, 1, 1, 1, 1, 0}),
+		new Matrix(2, 3, new int[6]{1, 0, 1, 1, 0, 1}),
+		new Matrix(3, 2, new int[6]{0, 1, 1, 1, 1, 0})
+		);
+	Pieces[6] = *new Piece(
+		new Matrix(2, 3, new int[6]{1, 0, 1, 1, 1, 0}),
+		new Matrix(3, 2, new int[6]{0, 1, 0, 1, 1, 1}),
+		new Matrix(2, 3, new int[6]{0, 1, 1, 1, 0, 1}),
+		new Matrix(3, 2, new int[6]{1, 1, 1, 0, 1, 0})
+		);
+
+	parsePOFile(poFileName);
 	currentPiece = 0;
 }
 
@@ -197,6 +306,31 @@ void TetrisSim::resetSim(){
 	currentPiece = 0;
 }
 
+void TetrisSim::parsePOFile(char *poFileName){
+	FILE *fp;
+	fopen_s(&fp, poFileName, "r");
+
+	int c = fgetc(fp), n = 0;
+	while (c != EOF){
+		if (c == '\n') n++;
+		c = fgetc(fp);
+	}
+	this->nPieces = n++;
+	this->pieceOrder = (int *)calloc(this->nPieces, sizeof(int));
+	fclose(fp);
+
+	fopen_s(&fp, poFileName, "r");
+	c = fgetc(fp);
+	n = 0;
+	while (c != EOF){
+		if (c == '\n') n++;
+		else { 
+			pieceOrder[n] = c - 48; 
+		}
+		c = fgetc(fp);
+	}
+	fclose(fp);
+}
 
 /*0
 00-03
