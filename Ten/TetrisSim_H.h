@@ -52,6 +52,9 @@ public:
 	int getPieceOrder();
 	int getNextPiece();
 
+	int getCurrentPiece();
+	int getNPieces();
+
 	int getBoardWidth();
 	int getBoardHeight();
 	int* getBoardState();

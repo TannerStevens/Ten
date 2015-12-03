@@ -242,6 +242,8 @@ int* TetrisSim::getBoardState(){
 	}
 	return state; 
 }
+int TetrisSim::getCurrentPiece(){ return currentPiece; }
+int TetrisSim::getNPieces(){ return nPieces; }
 
 int TetrisSim::addPiece(int i, int j){
 	if (currentPiece >= nPieces)return 0;
@@ -260,6 +262,12 @@ int TetrisSim::addPiece(int t, int i, int j){
 
 	int ly = h; //Y level of the Lowest Part of a Piece
 	int looking = true;
+
+	/*
+	**Currently allows pieces to be placed improperly under already placed pieces.
+	Check top to bottom, and then once a improper placement is hit, then use ly-1
+	for a proper placement.
+	*/
 	while (looking){
 		if (--ly < 0) return 0;
 		for (int s = 0; s < tH && looking; s++){

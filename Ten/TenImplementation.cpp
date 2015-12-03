@@ -34,13 +34,12 @@ void keyboard(unsigned char key, int x, int y){
 	int vY = height - y;
 	int mod = glutGetModifiers();
 	if (mod == GLUT_ACTIVE_ALT){ //Global Commands
-		if (key == 'i') Inspect(DNA());
-		else if (key == 'p'){
+		if (key == 'p'){
 			for (std::list<Visualizer>::iterator it = visualizers.begin(); it != visualizers.end(); ++it){
 				it->pauseHandler(-1);
 			}
 		}
-		else if (key == '+'){
+		else if (key == '*'){
 			switch (POsetting){
 				case 0:
 					visualizers.push_back(Visualizer(0, 0, width, height, Player(TetrisSim(10, 20, poSeed))));
@@ -51,13 +50,18 @@ void keyboard(unsigned char key, int x, int y){
 			}
 			reshape(width, height);
 		}
-		else if (key == '-' && visualizers.size() > 1){
+		else if (key == '/' && visualizers.size() > 1){
 			visualizers.pop_back();
 			reshape(width, height);
 		}
+		else{ //Propagate to all Visualizers
+			for (std::list<Visualizer>::iterator it = visualizers.begin(); it != visualizers.end(); ++it){
+				it->keyboard(key, x, y);
+			}
+		}
 	}
 	else{
-		if (key == 'd' && visualizers.size() > 1){
+		if (key == '\\' && visualizers.size() > 1){
 			for (std::list<Visualizer>::iterator it = visualizers.begin(); it != visualizers.end(); ++it){
 				if (x >= it->x && x <= it->x + it->w && vY >= it->y && vY <= it->y + it->h){
 					visualizers.erase(it);

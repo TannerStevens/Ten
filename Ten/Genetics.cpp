@@ -33,6 +33,7 @@ void Player::evaluate(){
 		} while (result != 0);
 		if (currentGen[c].getScore() > highscore->getScore())highscore = &currentGen[c];
 		delete r;delete p;
+		calculateAggHeight(c);
 	}
 	reproduce();
 }
@@ -54,6 +55,8 @@ void Player::onlyEvaluate(){
 		} while (result != 0);
 		if (currentGen[c].getScore() > highscore->getScore())highscore = &currentGen[c];
 		delete r; delete p;
+		calculateAggHeight(c);
+		calculateNHoles(c);
 	}
 }
 
@@ -85,6 +88,41 @@ void Player::reproduce(){
 	delete r;
 }
 
+void Player::calculateAggHeight(int c){
+	int *board = ts.getBoardState();
+	int bW = ts.getBoardWidth(), bH = ts.getBoardHeight();
+	float aggHeight = 0;
+	for (int i = 0; i < bW; i++){
+		for (int j = 0; j < bH; j++){
+			if (board[j*bW + i]){
+				aggHeight += bH - j;
+				break;
+			}
+		}
+	}
+	delete board;
+
+	currentGen[c].setAggHeight(aggHeight);
+}
+
+void Player::calculateNHoles(int c){
+	int *board = ts.getBoardState();
+	int bW = ts.getBoardWidth(), bH = ts.getBoardHeight();
+	int holes = 0;
+	for (int i = 0; i < bW; i++){
+		for (int j = 0; j < bH; j++){
+			if (!board[j*bW + i] && board[j+1*bW + i]){
+				holes++;
+			}
+		}
+	}
+	delete board;
+
+	holes = ceil(holes/(ts.getCurrentPiece()+1));
+
+	currentGen[c].setHoles(holes);
+}
+
 DNA::DNA(){ 
 	Random *r = new Random(); 
 	rotationGene = r->Next(); 
@@ -109,3 +147,7 @@ int DNA::getPositionGene(){ return positionGene; }
 void DNA::addToScore(int s){ score += s; }
 int DNA::getScore(){ return score; }
 void DNA::setScore(int s){ score = s; }
+float DNA::getAggHeight(){ return aggHeight; }
+void DNA::setAggHeight(float h){ aggHeight = h; }
+int DNA::getHoles(){ return holes; }
+void DNA::setHoles(int h){ holes = h; }

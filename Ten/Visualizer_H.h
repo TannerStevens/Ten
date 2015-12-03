@@ -13,6 +13,11 @@ private:
 public:
 	Poly *polys;
 	int x, y, w, h, pauseUpdates, pauseRendering, highscore;
+	/*	0-2 xyz shifts
+		3-5 xyz rots
+		6-8 xyz scaling
+	*/
+	GLfloat transformations[9];
 	GLfloat mx, my, mz;
 	Player play;
 

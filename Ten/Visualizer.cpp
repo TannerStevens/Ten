@@ -110,6 +110,16 @@ Visualizer::Visualizer(int x, int y, int w, int h, Player play){
 	this->x = x; this->y = y; this->w = w; this->h = h;
 	this->highscore = 0;
 	this->play = play;
+
+	this->transformations[0] = 0;
+	this->transformations[1] = 0;
+	this->transformations[2] = 0;
+	this->transformations[3] = 5;
+	this->transformations[4] = 0;
+	this->transformations[5] = 0;
+	this->transformations[6] = 1;
+	this->transformations[7] = 1;
+	this->transformations[8] = 1;
 }
 
 void Visualizer::pauseHandler(int r){
@@ -132,20 +142,21 @@ void Visualizer::update(){
 		this->highscore = play.highscore->getScore();
 		//DO Updates
 		int size = ceil(sqrt(play.genSize)), c = -1;
-		GLfloat lx = 0, ly = 0, tx = 0, ty = 0;
+		GLfloat lx = 0, ly = 0, tx = 0, ty = 0, tz = 0;
 		for (int i = size - 1; c < play.genSize - 1 && i >= 0; --i){
 			for (int j = 0; c < play.genSize - 1 && j < size; ++j){
 				c++;
-				polys[c].setAttribs(lx, ly, 0, play.currentGen[c].getScore(), 2, 0);
+				polys[c].setAttribs(lx, ly, 0, play.currentGen[c].getScore(), play.currentGen[c].getAggHeight(), play.currentGen[c].getHoles());
 				polys[c].setMaterials(play.currentGen[c].getRotationGene(), play.currentGen[c].getPositionGene());
 				lx = polys[c].getRX();
 				tx = lx > tx ? lx : tx;
 				ty = polys[c].getTY() > ty ? polys[c].getTY() : ty;
+				tz = play.currentGen[c].getAggHeight() > tz ? play.currentGen[c].getAggHeight() : tz;
 			}
 			ly = ty;
 			lx = 0;
 		}
-		mx = tx; my = ly; mz = 2;
+		mx = tx; my = ly; mz = tz;
 		//
 		play.reproduce();
 	}
@@ -159,8 +170,11 @@ void Visualizer::display(void){
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 
-			glScaled(1 / mx, 1 / my, 1 / mz);
-			glTranslated(-mx, -my, 0);
+			glTranslated(-1 + transformations[0], -1 + transformations[1], transformations[2]);
+			glScaled(transformations[6] / mx, transformations[7] / my, transformations[8] / mz);
+			glRotated(transformations[5], 0, 0, 1);
+			glRotated(transformations[4], 0, 1, 0);
+			glRotated(transformations[3], 1, 0, 0);
 			for (int i = 0; i < play.genSize; i++){
 				polys[i].drawPoly();
 			}
@@ -173,6 +187,43 @@ void Visualizer::display(void){
 }
 void Visualizer::keyboard(unsigned char key, int x, int y){
 	if (key == 'p') pauseHandler(-1);
+
+	else if (key == 'w') this->transformations[1] += .1;
+	else if (key == 's') this->transformations[1] -= .1;
+	else if (key == 'a') this->transformations[0] -= .1;
+	else if (key == 'd') this->transformations[0] += .1;
+	else if (key == 'q') this->transformations[2] += .1;
+	else if (key == 'e') this->transformations[2] -= .1;
+
+	else if (key == '8') this->transformations[4]++;
+	else if (key == '2') this->transformations[4]--;
+	else if (key == '4') this->transformations[3]++;
+	else if (key == '6') this->transformations[3]--;
+	else if (key == '7') this->transformations[5]++;
+	else if (key == '9') this->transformations[5]--;
+
+	else if (key == '+'){ 
+		this->transformations[6]+=.1; 
+		this->transformations[7]+=.1;
+		this->transformations[8]+=.1;
+	}
+	else if (key == '-'){
+		this->transformations[6]-=.1;
+		this->transformations[7]-=.1;
+		this->transformations[8]-=.1;
+	}
+
+	else if (key == '5'){
+		this->transformations[0] = 0;
+		this->transformations[1] = 0;
+		this->transformations[2] = 0;
+		this->transformations[3] = 5;
+		this->transformations[4] = 0;
+		this->transformations[5] = 0;
+		this->transformations[6] = 1;
+		this->transformations[7] = 1;
+		this->transformations[8] = 1;
+	}
 }
 void Visualizer::mouse(int button, int state, int x, int y){
 	if (state == GLUT_DOWN){

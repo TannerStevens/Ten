@@ -10,6 +10,9 @@ class Player;
 class Player{
 private:
 	TetrisSim ts;
+
+	void calculateAggHeight(int c);
+	void calculateNHoles(int c);
 public:
 	int genSize, generations;
 	DNA *currentGen, *highscore;
@@ -25,7 +28,8 @@ public:
 
 class DNA{
 private:
-	int score, rotationGene, positionGene;
+	int score, holes, rotationGene, positionGene;
+	float aggHeight;
 public:
 
 	DNA();
@@ -37,6 +41,10 @@ public:
 	void addToScore(int s);
 	int getScore();
 	void setScore(int s);
+	int getHoles();
+	void setHoles(int h);
+	float getAggHeight();
+	void setAggHeight(float h);
 };
 
 #endif
