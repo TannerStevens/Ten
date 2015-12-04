@@ -10,6 +10,7 @@ Player::Player(TetrisSim t){
 	for (int i = 0; i < genSize; i++){
 		currentGen[i] = *new DNA();
 	}
+	highWscore = &currentGen[0];
 	highscore = &currentGen[0];
 	/*while (generations==-1 || generations-- > 0){
 		evaluate();
@@ -39,6 +40,7 @@ void Player::evaluate(){
 }
 
 void Player::onlyEvaluate(){
+	highWscore = &currentGen[0];
 	highscore = &currentGen[0];
 	for (int c = 0; c < genSize; c++){
 		ts.resetSim();
@@ -53,36 +55,44 @@ void Player::onlyEvaluate(){
 			result = ts.addPiece(i, j);
 			currentGen[c].addToScore(result);
 		} while (result != 0);
-		if (currentGen[c].getScore() > highscore->getScore())highscore = &currentGen[c];
-		delete r; delete p;
 		calculateAggHeight(c);
 		calculateNHoles(c);
+
+		float wAggH = currentGen[c].getAggHeight() / (ts.getCurrentPiece() + 1);
+		if (!wAggH)wAggH = 1;
+		float wScore = (float)currentGen[c].getScore() / wAggH;
+		currentGen[c].setWScore(wScore);
+		if (currentGen[c].getScore() > highscore->getScore())highscore = &currentGen[c];
+		if (currentGen[c].getWScore() > highscore->getWScore())highWscore = &currentGen[c];
+		delete r; delete p;
 	}
 }
 
 void Player::reproduce(){
 	//Highest Scoring DNA should Persist
 	Random *r = new Random(time(NULL));
-	for (int i = 0; i < genSize; i++){
+	currentGen[0] = DNA(highscore->getRotationGene(), highscore->getPositionGene());
+	currentGen[1] = DNA(highWscore->getRotationGene(), highWscore->getPositionGene());
+	currentGen[2] = DNA(highWscore->getRotationGene(), highscore->getPositionGene());
+	currentGen[3] = DNA(highscore->getRotationGene(), highWscore->getPositionGene());
+	for (int i = 4; i < genSize; i++){
 		currentGen[i].setScore(0);
-		if (&currentGen[i] != highscore){
-			switch (r->Next(1, 5)){
-				case 1:
-					currentGen[i] = DNA(highscore->getPositionGene(), currentGen[i].getRotationGene());
-					break;
-				case 2:
-					currentGen[i] = DNA(currentGen[i].getRotationGene(), highscore->getPositionGene());
-					break;
-				case 3:
-					currentGen[i] = DNA(currentGen[i].getRotationGene() + currentGen[i].getPositionGene());
-					break;
-				case 4:
-					currentGen[i] = DNA(highscore->getRotationGene() + highscore->getPositionGene());
-					break;
-				case 5:
-					currentGen[i] = DNA();
-					break;
-			}
+		switch (r->Next(1, 7)){
+			case 1:
+				currentGen[i] = DNA(currentGen[i].getRotationGene(), highscore->getPositionGene());
+				break;
+			case 2:
+				currentGen[i] = DNA(highscore->getRotationGene(), currentGen[i].getPositionGene());
+				break;
+			case 3:
+				currentGen[i] = DNA(currentGen[i].getRotationGene(), highWscore->getPositionGene());
+				break;
+			case 4:
+				currentGen[i] = DNA(highWscore->getRotationGene(), currentGen[i].getPositionGene());
+				break;
+			default:
+				currentGen[i] = DNA();
+				break;
 		}
 	}
 	delete r;
@@ -151,3 +161,5 @@ float DNA::getAggHeight(){ return aggHeight; }
 void DNA::setAggHeight(float h){ aggHeight = h; }
 int DNA::getHoles(){ return holes; }
 void DNA::setHoles(int h){ holes = h; }
+float DNA::getWScore(){ return wScore; }
+void DNA::setWScore(float wS){ wScore = wS; }

@@ -115,7 +115,7 @@ Visualizer::Visualizer(int x, int y, int w, int h, Player play){
 	this->transformations[1] = 0;
 	this->transformations[2] = 0;
 	this->transformations[3] = 5;
-	this->transformations[4] = 0;
+	this->transformations[4] = -2;
 	this->transformations[5] = 0;
 	this->transformations[6] = 1;
 	this->transformations[7] = 1;
@@ -218,7 +218,7 @@ void Visualizer::keyboard(unsigned char key, int x, int y){
 		this->transformations[1] = 0;
 		this->transformations[2] = 0;
 		this->transformations[3] = 5;
-		this->transformations[4] = 0;
+		this->transformations[4] = -2;
 		this->transformations[5] = 0;
 		this->transformations[6] = 1;
 		this->transformations[7] = 1;

@@ -15,7 +15,7 @@ private:
 	void calculateNHoles(int c);
 public:
 	int genSize, generations;
-	DNA *currentGen, *highscore;
+	DNA *currentGen, *highscore, *highWscore;
 
 	Player(){};
 	Player(TetrisSim t); //"Random" but capped Generation Size
@@ -29,7 +29,7 @@ public:
 class DNA{
 private:
 	int score, holes, rotationGene, positionGene;
-	float aggHeight;
+	float aggHeight, wScore;
 public:
 
 	DNA();
@@ -45,6 +45,8 @@ public:
 	void setHoles(int h);
 	float getAggHeight();
 	void setAggHeight(float h);
+	float getWScore();
+	void setWScore(float wS);
 };
 
 #endif
