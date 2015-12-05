@@ -13,9 +13,6 @@
 static GLint width, height;
 static GLfloat LR = -3.0;
 
-
-
-//Redraw the Board
 void updatePiece(int c);
 void updateBoard();
 float rayIntersectsSphere(GLfloat* p, GLfloat* d, GLfloat r, GLfloat* c);

@@ -30,9 +30,6 @@
     <ClCompile Include="TenImplementation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="VP.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Graph.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -60,9 +57,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Ten_H.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="VP_H.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Graph_H.h">

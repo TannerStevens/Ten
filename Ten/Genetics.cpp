@@ -3,6 +3,7 @@
 
 Player::Player(TetrisSim t){
 	generations = -1;
+	nGenNHS = 0;
 	ts = t;
 
 	genSize = 100;//Random(time(NULL)).Next(20);
@@ -62,10 +63,16 @@ void Player::onlyEvaluate(){
 		if (!wAggH)wAggH = 1;
 		float wScore = (float)currentGen[c].getScore() / wAggH;
 		currentGen[c].setWScore(wScore);
-		if (currentGen[c].getScore() > highscore->getScore())highscore = &currentGen[c];
-		if (currentGen[c].getWScore() > highscore->getWScore())highWscore = &currentGen[c];
+		if (currentGen[c].getScore() > highscore->getScore()){ 
+			highscore = &currentGen[c]; 
+			nGenNHS = 0;
+		}
+		if (currentGen[c].getWScore() > highscore->getWScore()){
+			highWscore = &currentGen[c];
+		}
 		delete r; delete p;
 	}
+	nGenNHS++;
 }
 
 void Player::reproduce(){
@@ -73,22 +80,21 @@ void Player::reproduce(){
 	Random *r = new Random(time(NULL));
 	currentGen[0] = DNA(highscore->getRotationGene(), highscore->getPositionGene());
 	currentGen[1] = DNA(highWscore->getRotationGene(), highWscore->getPositionGene());
-	currentGen[2] = DNA(highWscore->getRotationGene(), highscore->getPositionGene());
-	currentGen[3] = DNA(highscore->getRotationGene(), highWscore->getPositionGene());
-	for (int i = 4; i < genSize; i++){
+	int mutationsize = 1 * nGenNHS;
+	for (int i = 2; i < genSize; i++){
 		currentGen[i].setScore(0);
 		switch (r->Next(1, 7)){
 			case 1:
-				currentGen[i] = DNA(currentGen[i].getRotationGene(), highscore->getPositionGene());
+				currentGen[i] = DNA(currentGen[i].getRotationGene()-mutationsize, highscore->getPositionGene()+mutationsize);
 				break;
 			case 2:
-				currentGen[i] = DNA(highscore->getRotationGene(), currentGen[i].getPositionGene());
+				currentGen[i] = DNA(highscore->getRotationGene()-mutationsize, currentGen[i].getPositionGene()-mutationsize);
 				break;
 			case 3:
-				currentGen[i] = DNA(currentGen[i].getRotationGene(), highWscore->getPositionGene());
+				currentGen[i] = DNA(currentGen[i].getRotationGene()+mutationsize, highWscore->getPositionGene()-mutationsize);
 				break;
 			case 4:
-				currentGen[i] = DNA(highWscore->getRotationGene(), currentGen[i].getPositionGene());
+				currentGen[i] = DNA(highWscore->getRotationGene()+mutationsize, currentGen[i].getPositionGene()+mutationsize);
 				break;
 			default:
 				currentGen[i] = DNA();

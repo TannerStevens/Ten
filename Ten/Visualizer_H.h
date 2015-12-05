@@ -12,7 +12,7 @@ class Visualizer{
 private:
 public:
 	Poly *polys;
-	int x, y, w, h, pauseUpdates, pauseRendering, highscore;
+	int x, y, w, h, pauseUpdates, pauseRendering, highscore, delay;
 	/*	0-2 xyz shifts
 		3-5 xyz rots
 		6-8 xyz scaling

@@ -260,7 +260,7 @@ int TetrisSim::addPiece(int t, int i, int j){
 	int tH = tP->getHeight();
 	int tW = tP->getWidth();
 
-	int ly = h; //Y level of the Lowest Part of a Piece
+	int ly = tH-2; //Y level of the Lowest Part of a Piece
 	int looking = true;
 
 	/*
@@ -269,15 +269,28 @@ int TetrisSim::addPiece(int t, int i, int j){
 	for a proper placement.
 	*/
 	while (looking){
-		if (--ly < 0) return 0;
+		/*if (--ly < 0) return 0;
 		for (int s = 0; s < tH && looking; s++){
 			for (int t = 0; t < tW && looking; t++){
 				if (tP->getValueAt(tH - 1 - s, t) + board->getValueAt(ly - s, t + j) > 1)goto next;
 				else if (s == tH - 1 && t == tW - 1) looking = false;
 			}
 		}
-		next:;
+		next:;*/
+		if (++ly > h - 1){ 
+			ly = h;
+			break; 
+		}
+		for (int s = 0; s < tH && looking; s++){
+			for (int t = 0; t < tW && looking; t++){
+				if (tP->getValueAt(tH - 1 - s, t) + board->getValueAt(ly - s, t + j) > 1){ 
+					if (ly == tH-1) return 0;
+					else looking = false; 
+				}
+			}
+		}
 	}
+	ly--;
 	for (int s = 0; s < tH; s++){
 		for (int t = 0; t < tW; t++){
 			board->addtoValueAt(ly - s, t + j, tP->getValueAt(tH - 1 - s, t));

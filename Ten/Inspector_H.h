@@ -9,7 +9,7 @@
 class Inspector{
 private:
 public:
-	int winID, step = -1;
+	int winID, step = -1, *lBoard;
 	TetrisSim ts;
 	DNA ins;
 

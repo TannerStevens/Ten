@@ -89,7 +89,7 @@ float rayIntersectsSphere(GLfloat* p, GLfloat* d, GLfloat r, GLfloat* c){
 void drawBitmapTexti(int in, float x, float y){
 	glDisable(GL_LIGHTING);
 	glDisable(GL_DEPTH_TEST);
-	glColor3f(0, 0, 0);
+	glColor3f(1, 1, 1);
 
 	char *c, k[5];
 	sprintf_s(k, 5,"%i", in);
@@ -107,7 +107,7 @@ Visualizer::Visualizer(int x, int y, int w, int h, Player play){
 	this->pauseUpdates = false;
 	this->pauseRendering = false;
 	this->polys = (Poly *)calloc(play.genSize, sizeof(Poly));
-	this->x = x; this->y = y; this->w = w; this->h = h;
+	this->x = x; this->y = y; this->w = w; this->h = h; this->delay = 0;
 	this->highscore = 0;
 	this->play = play;
 
@@ -177,6 +177,7 @@ void Visualizer::display(void){
 			glRotated(transformations[3], 1, 0, 0);
 			for (int i = 0; i < play.genSize; i++){
 				polys[i].drawPoly();
+				if (this->delay){ glFlush(); Sleep(delay); }
 			}
 			drawBitmapTexti(highscore, .1, .1);
 
@@ -187,6 +188,8 @@ void Visualizer::display(void){
 }
 void Visualizer::keyboard(unsigned char key, int x, int y){
 	if (key == 'p') pauseHandler(-1);
+	else if (key == ',') delay = 20;
+	else if (key == '.') delay = 0;
 
 	else if (key == 'w') this->transformations[1] += .1;
 	else if (key == 's') this->transformations[1] -= .1;

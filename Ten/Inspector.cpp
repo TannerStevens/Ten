@@ -6,6 +6,7 @@ Inspector::Inspector(){}
 Inspector::Inspector(TetrisSim ts){
 	int lWin = glutGetWindow();
 	this->ts = ts;
+	this->lBoard = ts.getBoardState();
 	this->winID = glutCreateWindow("Inspector");
 	glutDisplayFunc(display_inspector);
 	glutKeyboardFunc(keyboard_inspector);
@@ -14,7 +15,8 @@ Inspector::Inspector(TetrisSim ts){
 }
 
 void drawBitmapInteger(int in, float x, float y){
-	glColor3f(0, 0, 0);
+	if(in) glColor3f(0, 0, 0);
+	else glColor3f(1, 1, 1);
 
 	char *c, k[5];
 	sprintf_s(k, 5, "%i", in);
@@ -32,14 +34,19 @@ void Inspector::display(void){
 
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
-
+	/*
+	Use board-lBoard to identify pieces and then add them to a seperate list of pieces
+	Pieces should be .obj's
+		means that the objLoader needs its draw method integrated
+	*/
 	glScalef(1 / (GLfloat)ts.getBoardWidth(), 1 / (GLfloat)ts.getBoardHeight(), 1);
 	glTranslatef(-ts.getBoardWidth(), -ts.getBoardHeight(), 0);
 	int* board = ts.getBoardState();
 	float x = 0, y = ts.getBoardHeight();
 	for (int h = 0; h < ts.getBoardHeight(); h++){
 		for (int w = 0; w < ts.getBoardWidth(); w++){
-			drawBitmapInteger(board[h*ts.getBoardWidth() + w],x++,y);
+			//if (board[h*ts.getBoardWidth() + w] != lBoard[h*ts.getBoardWidth() + w])
+			drawBitmapInteger(board[h*ts.getBoardWidth() + w], x++, y);
 		}
 		y -= 1;
 		x = 0;
@@ -48,6 +55,7 @@ void Inspector::display(void){
 
 	glPopMatrix();
 
+	lBoard = board;
 	delete board;
 	glFlush();
 

@@ -14,7 +14,7 @@ private:
 	void calculateAggHeight(int c);
 	void calculateNHoles(int c);
 public:
-	int genSize, generations;
+	int genSize, generations, nGenNHS;
 	DNA *currentGen, *highscore, *highWscore;
 
 	Player(){};

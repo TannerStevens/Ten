@@ -6,6 +6,8 @@ int POsetting = 0; //0=Seed, 1=poFileName
 int poSeed;
 char* poFileName;
 
+int bGPauseRendering = false;
+
 void idle(){
 	for (std::list<Visualizer>::iterator it = visualizers.begin(); it != visualizers.end(); ++it){
 		it->update();
@@ -14,13 +16,14 @@ void idle(){
 	glutPostRedisplay();
 }
 void display(void){
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	if (!bGPauseRendering){
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
-	for (std::list<Visualizer>::iterator it = visualizers.begin(); it != visualizers.end(); ++it){
-		it->display();
+		for (std::list<Visualizer>::iterator it = visualizers.begin(); it != visualizers.end(); ++it){
+			it->display();
+		}
+		glFlush();
 	}
-	glFlush();
 }
 
 void mouse(int button, int state, int x, int y){
@@ -79,7 +82,12 @@ void keyboard(unsigned char key, int x, int y){
 }
 
 void visible(int state){
-
+	if (state == GLUT_VISIBLE){
+		bGPauseRendering = false;
+	}
+	else{
+		bGPauseRendering = true;
+	}
 }
 
 void reshape(int w, int h){
@@ -110,6 +118,7 @@ void other_init(){
 	glShadeModel(GL_SMOOTH);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
+	glFrustum(-1, 1, -1, 1, -1, 1);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glLightfv(GL_LIGHT0, GL_POSITION, new GLfloat[]{0, 0, .5, 1});
