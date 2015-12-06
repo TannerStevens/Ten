@@ -50,6 +50,7 @@ public:
 	OBJLoader(char file_name[256]);
 
 	void draw();
+	void draw(GLfloat xOffset, GLfloat yOffset, GLfloat zOffset);
 };
 
 #endif

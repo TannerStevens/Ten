@@ -274,6 +274,29 @@ void OBJLoader::draw(){
 
 	}
 }
+void OBJLoader::draw(GLfloat xOffset, GLfloat yOffset, GLfloat zOffset){
+	for (std::list<Object>::iterator cObj = objects.begin(); cObj != objects.end(); ++cObj){
+		for (std::list<Group>::iterator cGroup = cObj->groups.begin(); cGroup != cObj->groups.end(); ++cGroup){
+			glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, cGroup->kMats);
+			glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, cGroup->kMats + 3);
+			glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, cGroup->kMats + 6);
+			glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, cGroup->kMats + 9);
+			glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, cGroup->kMats[12]);
+
+			for (int f = 0; f < cGroup->nFaces; f++){
+				glBegin(GL_TRIANGLES);
+				glNormal3fv(vnList + cGroup->displayList[f * 6 + 1] * 3);
+				glVertex3f(vList[(cGroup->displayList[f * 6] * 3)] + xOffset, vList[(cGroup->displayList[f * 6] * 3) + 1] + yOffset, vList[(cGroup->displayList[f * 6] * 3)+2] + zOffset);
+				glNormal3fv(vnList + cGroup->displayList[f * 6 + 3] * 3);
+				glVertex3f(vList[(cGroup->displayList[f * 6 + 2] * 3)] + xOffset, vList[(cGroup->displayList[f * 6 + 2] * 3) + 1] + yOffset, vList[(cGroup->displayList[f * 6 + 2] * 3) + 2] + zOffset);
+				glNormal3fv(vnList + cGroup->displayList[f * 6 + 5] * 3);
+				glVertex3f(vList[(cGroup->displayList[f * 6 + 4] * 3)] + xOffset, vList[(cGroup->displayList[f * 6 + 4] * 3) + 1] + yOffset, vList[(cGroup->displayList[f * 6 + 2] * 3) + 4] + zOffset);
+				glEnd();
+			}
+		}
+
+	}
+}
 
 Object::Object(){}
 Object::Object(char* oName){

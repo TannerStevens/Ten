@@ -25,6 +25,7 @@ public:
 
 	void display(void);
 	void keyboard(unsigned char key, int x, int y);
+	void mouse_movement(int x, int y);
 	void nextStep();
 	void reset();
 	void drawTetrisPiece(int t, int x, int y, int j);
@@ -34,5 +35,6 @@ void Inspect(DNA cur);
 void initInspector(TetrisSim ts);
 void display_inspector(void);
 void keyboard_inspector(unsigned char key, int x, int y);
+void pMouseMove_inspector(int x, int y);
 
 #endif

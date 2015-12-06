@@ -1,5 +1,33 @@
 #include "Inspector_H.h"
 
+template <class T> GLfloat distance(T* v){
+	return sqrt(pow(v[0], 2) + pow(v[1], 2) + pow(v[2], 2));
+}
+
+template <class T, class J> J* p2pVec(T* sP, T* eP){
+	J* rVector = (J*)calloc(4, sizeof(J));
+
+	rVector[0] = (J)(eP[0] - sP[0]);
+	rVector[1] = (J)(eP[1] - sP[1]);
+	rVector[2] = (J)(eP[2] - sP[2]);
+	rVector[3] = 1;
+
+	return rVector;
+}
+
+template <class T> T* unitfyVector(T* v){
+	T* rVector = (T*)calloc(4, sizeof(T));
+
+	GLfloat s = distance(v);
+
+	rVector[0] = (T)(v[0] / s);
+	rVector[1] = (T)(v[1] / s);
+	rVector[2] = (T)(v[2] / s);
+	rVector[3] = 1;
+
+	return rVector;
+}
+
 Inspector active;
 
 Inspector::Inspector(){}
@@ -11,9 +39,28 @@ Inspector::Inspector(TetrisSim ts){
 	this->lBoard = ts.getBoardState();
 	this->tpBase = OBJLoader("tetrisbase.obj");
 	this->winID = glutCreateWindow("Inspector");
+
 	glutDisplayFunc(display_inspector);
 	glutKeyboardFunc(keyboard_inspector);
+	glutPassiveMotionFunc(pMouseMove_inspector);
+
 	glClearColor(0, 0, 0, 0);
+	glShadeModel(GL_SMOOTH);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(-1, 1, -1, 1, -1, 1);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glLightf(GL_LIGHT0 + 5, GL_SPOT_CUTOFF, 10);
+	glLightfv(GL_LIGHT0 + 5, GL_DIFFUSE, new GLfloat[]{1, 1, 1, 1});
+	glLightf(GL_LIGHT0 + 5, GL_LINEAR_ATTENUATION, 1);
+
+	glPointSize(6);
+
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0+5);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_NORMALIZE);
 
 	this->transformations[0] = 0;
 	this->transformations[1] = 0;
@@ -48,22 +95,22 @@ void Inspector::display(void){
 
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
-	/*
-	Use board-lBoard to identify pieces and then add them to a seperate list of pieces
-	Pieces should be .obj's
-	means that the objLoader needs its draw method integrated
-	*/
-	glScaled(transformations[6] / (GLfloat)ts.getBoardWidth(), transformations[7] / (GLfloat)ts.getBoardHeight(), transformations[8]);
-	glTranslated(-ts.getBoardWidth() + transformations[0], -ts.getBoardHeight() + transformations[1], transformations[2]);
+
+	glLoadIdentity();
+	glScaled(transformations[6] / (GLfloat)ts.getBoardWidth(), transformations[7] / (GLfloat)ts.getBoardHeight(), transformations[8] / (GLfloat)ts.getBoardHeight());
+	glTranslated(-ts.getBoardWidth() + transformations[0], -ts.getBoardHeight() + transformations[1], 0);
 	glRotated(transformations[5], 0, 0, 1);
 	glRotated(transformations[4], 0, 1, 0);
 	glRotated(transformations[3], 1, 0, 0);
-	//Random r = Random();
-	//glColor3f(r.NextDouble(0, 1), r.NextDouble(0, 1), r.NextDouble(0, 1)); Change Koefficients instead
 
-	for (int n = 0; n < pieceCount; n++){
-		int pIndex = n * 4;
-		drawTetrisPiece(pieces[pIndex], pieces[pIndex + 1], pieces[pIndex + 2], pieces[pIndex + 3]);
+	int* board = ts.getBoardState();
+	float x = 0, y = ts.getBoardHeight();
+	for (int h = 0; h < ts.getBoardHeight(); h++){
+		for (int w = 0; w < ts.getBoardWidth(); w++){
+			if (board[h*ts.getBoardWidth() + w]){
+				tpBase.draw(w,y-h,0);
+			}
+		}
 	}
 
 	//
@@ -130,106 +177,43 @@ void Inspector::nextStep(){
 	}
 	int i = r.Next(3);
 	int j = p.Next(ts.getBoardWidth() - 1);
-	int t = ts.getNextPiece();
 	int result = ts.addPiece(i,j);
 	ins.addToScore(result);
 
-	int* board = ts.getBoardState();
-	int ly = 0;
-	for (int h = ts.getBoardHeight()-1; h > -1 ; h--){
-		for (int w = 0; w < ts.getBoardWidth(); w++){
-			if (board[h*ts.getBoardWidth() + w] != lBoard[h*ts.getBoardWidth() + w]){
-				ly = ts.getBoardHeight() - 1 - h;
-				h = -1;
-				break;
-			}
-		}
-	}
-
-	delete lBoard;
-	lBoard = board;
-
-	int pIndex = pieceCount++ * 4;
-	pieces[pIndex] = t;
-	pieces[pIndex + 1] = j;
-	pieces[pIndex + 2] = ly;
-	pieces[pIndex + 3] = i;
 
 	glutPostRedisplay();
 }
 
-void Inspector::drawTetrisPiece(int t, int x, int y, int i){
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-	
-	//Add Rotation States since rotating with openGL isn't working out..
-	glTranslatef(x, y, 0);
-	if (t == 0){
-		tpBase.draw();
-		glTranslatef(1, 0, 0);
-		tpBase.draw();
-		glTranslatef(-1, 1, 0);
-		tpBase.draw();
-		glTranslatef(1, 0, 0);
-		tpBase.draw();
-	}
-	else if (t == 1){
-		tpBase.draw();
-		glTranslatef(1, 0, 0);
-		tpBase.draw();
-		glTranslatef(0, 1, 0);
-		tpBase.draw();
-		glTranslatef(0, 1, 0);
-		tpBase.draw();
-	}
-	else if (t == 2){
-		tpBase.draw();
-		glTranslatef(1, 0, 0);
-		tpBase.draw();
-		glTranslatef(-1, 1, 0);
-		tpBase.draw();
-		glTranslatef(0, 1, 0);
-		tpBase.draw();
-	}
-	else if (t == 3){
-		tpBase.draw();
-		glTranslatef(0, 1, 0);
-		tpBase.draw();
-		glTranslatef(0, 1, 0);
-		tpBase.draw();
-		glTranslatef(0, 1, 0);
-		tpBase.draw();
-	}
-	else if (t == 4){
-		tpBase.draw();
-		glTranslatef(0, 1, 0);
-		tpBase.draw();
-		glTranslatef(1, 0, 0);
-		tpBase.draw();
-		glTranslatef(0, 1, 0);
-		tpBase.draw();
-	}
-	else if (t == 5){
-		glTranslatef(1, 0, 0);
-		tpBase.draw();
-		glTranslatef(0, 1, 0);
-		tpBase.draw();
-		glTranslatef(-1, 0, 0);
-		tpBase.draw();
-		glTranslatef(0, 1, 0);
-		tpBase.draw();
-	}
-	else if (t == 6){
-		tpBase.draw();
-		glTranslatef(1, 0, 0);
-		tpBase.draw();
-		glTranslatef(1, 0, 0);
-		tpBase.draw();
-		glTranslatef(-1, 1, 0);
-		tpBase.draw();
-	}
-	glPopMatrix();
+void Inspector::mouse_movement(int x, int y){
+	GLint viewport[4]; //var to hold the viewport info
+	GLdouble modelview[16]; //var to hold the modelview info
+	GLdouble projection[16]; //var to hold the projection matrix info
+	GLfloat winX, winY; //variables to hold screen x,y,z coordinates
+	GLdouble worldCV[4]; //variables to hold world x,y,z coordinates
+	GLdouble worldFV[4]; //variables to hold world x,y,z coordinates
 
+	glMatrixMode(GL_MODELVIEW);
+	glGetDoublev(GL_MODELVIEW_MATRIX, modelview); //get the modelview info
+	glMatrixMode(GL_PROJECTION);
+	glGetDoublev(GL_PROJECTION_MATRIX, projection); //get the projection matrix info
+
+	glGetIntegerv(GL_VIEWPORT, viewport);
+
+	winX = (float)x;
+	winY = (float)glutGet(GLUT_WINDOW_HEIGHT) - (float)y;
+	//winY = (float)y;
+
+	GLint r1, r2;
+	//get the world coordinates from the screen coordinates
+	r1 = gluUnProject(winX, winY, 1, modelview, projection, viewport, &worldCV[0], &worldCV[1], &worldCV[2]);
+	r2 = gluUnProject(winX, winY, -1, modelview, projection, viewport, &worldFV[0], &worldFV[1], &worldFV[2]);
+
+	GLfloat wPos[] = { (GLfloat)worldFV[0], (GLfloat)worldFV[1], (GLfloat)worldFV[2], 1 };
+	GLfloat* dir = unitfyVector(p2pVec<GLdouble, GLfloat>(worldFV, worldCV));
+
+	glLightfv(GL_LIGHT0 + 5, GL_POSITION, wPos);
+	glLightfv(GL_LIGHT0 + 5, GL_SPOT_DIRECTION, dir);
+	glutPostRedisplay();
 }
 
 void Inspect(DNA cur){
@@ -248,4 +232,8 @@ void display_inspector(void){
 }
 void keyboard_inspector(unsigned char key, int x, int y){
 	active.keyboard(key, x, y);
+}
+
+void pMouseMove_inspector(int x, int y){
+	active.mouse_movement(x, y);
 }
