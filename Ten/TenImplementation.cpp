@@ -6,6 +6,7 @@ int POsetting = 0; //0=Seed, 1=poFileName
 int poSeed;
 char* poFileName;
 
+GLuint bgTexture;
 int bGPauseRendering = false;
 
 void idle(){
@@ -18,6 +19,27 @@ void idle(){
 void display(void){
 	if (!bGPauseRendering){
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		glMatrixMode(GL_MODELVIEW);
+		glPushMatrix();
+		glViewport(0, 0, width, height);
+		glDisable(GL_LIGHTING);
+		glDisable(GL_DEPTH_TEST);
+		glEnable(GL_TEXTURE_2D);
+
+		glBindTexture(GL_TEXTURE_2D, bgTexture);
+		glBegin(GL_QUADS);
+		glTexCoord2f(0.0, 0.0); glVertex3f(-1, -1, -.9);
+		glTexCoord2f(0.0, 1); glVertex3f(-1, 1, -.9);
+		glTexCoord2f(1, 1); glVertex3f(1, 1, -.9);
+		glTexCoord2f(1, 0.0); glVertex3f(1, -1, -.9);
+		glEnd();
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		glDisable(GL_TEXTURE_2D);
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_LIGHTING);
+		glPopMatrix();
 
 		for (std::list<Visualizer>::iterator it = visualizers.begin(); it != visualizers.end(); ++it){
 			it->display();
@@ -122,6 +144,14 @@ void other_init(){
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glLightfv(GL_LIGHT0, GL_POSITION, new GLfloat[]{0, 0, .5, 1});
+
+	bgTexture = SOIL_load_OGL_texture
+		(
+		"background.jpg",
+		SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID,
+		SOIL_FLAG_INVERT_Y
+		);
 
 	glPointSize(6);
 

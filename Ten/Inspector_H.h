@@ -5,11 +5,13 @@
 #include "Genetics_H.h"
 #include "OBJLoader_H.h"
 #include <GL/freeglut.h>
+#include <SOIL\SOIL.h>
 
 class Inspector{
 private:
 public:
 	int winID, step = -1, *lBoard, *pieces, pieceCount;
+	GLuint bgTexture;
 	TetrisSim ts;
 	OBJLoader tpBase;
 	DNA ins;

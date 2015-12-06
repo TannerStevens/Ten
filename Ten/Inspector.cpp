@@ -51,9 +51,19 @@ Inspector::Inspector(TetrisSim ts){
 	glOrtho(-1, 1, -1, 1, -1, 1);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+
+	this->bgTexture = SOIL_load_OGL_texture
+		(
+			"tetris.jpg",
+			SOIL_LOAD_AUTO,
+			SOIL_CREATE_NEW_ID,
+			SOIL_FLAG_INVERT_Y
+		);
+
+	glLightf(GL_LIGHT0 + 5, GL_SPOT_EXPONENT, 120);
 	glLightf(GL_LIGHT0 + 5, GL_SPOT_CUTOFF, 10);
 	glLightfv(GL_LIGHT0 + 5, GL_DIFFUSE, new GLfloat[]{1, 1, 1, 1});
-	glLightf(GL_LIGHT0 + 5, GL_LINEAR_ATTENUATION, 1);
+	glLightf(GL_LIGHT0 + 5, GL_LINEAR_ATTENUATION, .15);
 
 	glPointSize(6);
 
@@ -95,10 +105,24 @@ void Inspector::display(void){
 
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
-
 	glLoadIdentity();
+
+	glDisable(GL_LIGHTING);
+	glEnable(GL_TEXTURE_2D);
+
+	glBindTexture(GL_TEXTURE_2D, bgTexture);
+	glBegin(GL_QUADS);
+		glTexCoord2f(0.0, 0.0); glVertex3f(-1, -1, -.9);
+		glTexCoord2f(0.0, 1); glVertex3f(-1, 1, -.9);
+		glTexCoord2f(1, 1); glVertex3f(1, 1, -.9);
+		glTexCoord2f(1, 0.0); glVertex3f(1, -1, -.9);
+	glEnd();
+
+	glDisable(GL_TEXTURE_2D);
+	glEnable(GL_LIGHTING);
+
 	glScaled(transformations[6] / (GLfloat)ts.getBoardWidth(), transformations[7] / (GLfloat)ts.getBoardHeight(), transformations[8] / (GLfloat)ts.getBoardHeight());
-	glTranslated(-ts.getBoardWidth() + transformations[0], -ts.getBoardHeight() + transformations[1], 0);
+	glTranslated(-(ts.getBoardWidth()/2) + transformations[0], -ts.getBoardHeight() + transformations[1], 0);
 	glRotated(transformations[5], 0, 0, 1);
 	glRotated(transformations[4], 0, 1, 0);
 	glRotated(transformations[3], 1, 0, 0);
@@ -108,7 +132,12 @@ void Inspector::display(void){
 	for (int h = 0; h < ts.getBoardHeight(); h++){
 		for (int w = 0; w < ts.getBoardWidth(); w++){
 			if (board[h*ts.getBoardWidth() + w]){
-				tpBase.draw(w,y-h,0);
+				//tpBase.draw(w,y-h,0);
+				glPushMatrix();
+				glTranslatef(w, y - h, 0);
+				glScalef(.35, .35, .35);
+				glutSolidDodecahedron();
+				glPopMatrix();
 			}
 		}
 	}
