@@ -3,15 +3,22 @@
 
 #include "TetrisSim_H.h"
 #include "Genetics_H.h"
+#include "OBJLoader_H.h"
 #include <GL/freeglut.h>
-#include <vector>
 
 class Inspector{
 private:
 public:
-	int winID, step = -1, *lBoard;
+	int winID, step = -1, *lBoard, *pieces, pieceCount;
 	TetrisSim ts;
+	OBJLoader tpBase;
 	DNA ins;
+
+	/*	0-2 xyz shifts
+	3-5 xyz rots
+	6-8 xyz scaling
+	*/
+	GLfloat transformations[9];
 
 	Inspector();
 	Inspector(TetrisSim ts);
@@ -19,6 +26,8 @@ public:
 	void display(void);
 	void keyboard(unsigned char key, int x, int y);
 	void nextStep();
+	void reset();
+	void drawTetrisPiece(int t, int x, int y, int j);
 };
 
 void Inspect(DNA cur);
