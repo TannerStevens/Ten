@@ -63,7 +63,12 @@ Inspector::Inspector(TetrisSim ts){
 	glLightf(GL_LIGHT0 + 5, GL_SPOT_EXPONENT, 120);
 	glLightf(GL_LIGHT0 + 5, GL_SPOT_CUTOFF, 10);
 	glLightfv(GL_LIGHT0 + 5, GL_DIFFUSE, new GLfloat[]{1, 1, 1, 1});
+	glLightfv(GL_LIGHT0 + 5, GL_SPECULAR, new GLfloat[]{1, 1, 1, 1});
 	glLightf(GL_LIGHT0 + 5, GL_LINEAR_ATTENUATION, .15);
+
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, new GLfloat[]{1, 0, 0, 1});
+	glMaterialfv(GL_FRONT, GL_SPECULAR, new GLfloat[]{0, 0, 1, 1});
+	glMaterialf(GL_FRONT, GL_SHININESS, 4);
 
 	glPointSize(6);
 
