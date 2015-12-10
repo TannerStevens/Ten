@@ -229,58 +229,60 @@ void Visualizer::keyboard(unsigned char key, int x, int y){
 	}
 }
 void Visualizer::mouse(int button, int state, int x, int y){
-	if (state == GLUT_DOWN){
-		GLint viewport[4]; //var to hold the viewport info
-		GLdouble modelview[16]; //var to hold the modelview info
-		GLdouble projection[16]; //var to hold the projection matrix info
-		GLfloat winX, winY; //variables to hold screen x,y,z coordinates
-		GLdouble worldCV[4]; //variables to hold world x,y,z coordinates
-		GLdouble worldFV[4]; //variables to hold world x,y,z coordinates
+	if (button == GLUT_LEFT_BUTTON){
+		if (state == GLUT_DOWN){
+			GLint viewport[4]; //var to hold the viewport info
+			GLdouble modelview[16]; //var to hold the modelview info
+			GLdouble projection[16]; //var to hold the projection matrix info
+			GLfloat winX, winY; //variables to hold screen x,y,z coordinates
+			GLdouble worldCV[4]; //variables to hold world x,y,z coordinates
+			GLdouble worldFV[4]; //variables to hold world x,y,z coordinates
 
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
-		glLoadIdentity();
-		glScalef(1 / mx, 1 / my, 1 / mz);
-		glTranslatef(-mx, -my, 0);
-		glGetDoublev(GL_MODELVIEW_MATRIX, modelview); //get the modelview info
-		glPopMatrix();
-		glMatrixMode(GL_PROJECTION);
-		glPushMatrix();
-		glLoadIdentity();
-		glGetDoublev(GL_PROJECTION_MATRIX, projection); //get the projection matrix info
-		glPopMatrix();
+			glMatrixMode(GL_MODELVIEW);
+			glPushMatrix();
+			glLoadIdentity();
+			glScalef(1 / mx, 1 / my, 1 / mz);
+			glTranslatef(-mx, -my, 0);
+			glGetDoublev(GL_MODELVIEW_MATRIX, modelview); //get the modelview info
+			glPopMatrix();
+			glMatrixMode(GL_PROJECTION);
+			glPushMatrix();
+			glLoadIdentity();
+			glGetDoublev(GL_PROJECTION_MATRIX, projection); //get the projection matrix info
+			glPopMatrix();
 
-		viewport[0] = this->x;
-		viewport[1] = this->y;
-		viewport[2] = this->w;
-		viewport[3] = this->h;
+			viewport[0] = this->x;
+			viewport[1] = this->y;
+			viewport[2] = this->w;
+			viewport[3] = this->h;
 
-		winX = (float)x;
-		winY = (float)glutGet(GLUT_WINDOW_HEIGHT) - (float)y;
-		//winY = (float)y;
+			winX = (float)x;
+			winY = (float)glutGet(GLUT_WINDOW_HEIGHT) - (float)y;
+			//winY = (float)y;
 
-		GLint r1, r2;
-		//get the world coordinates from the screen coordinates
-		r1 = gluUnProject(winX, winY, 1, modelview, projection, viewport, &worldCV[0], &worldCV[1], &worldCV[2]);
-		r2 = gluUnProject(winX, winY, -1, modelview, projection, viewport, &worldFV[0], &worldFV[1], &worldFV[2]);
-		printf("\n%f %f %f", worldCV[0], worldCV[1], worldCV[2]);
-		printf("\n%f %f %f", worldFV[0], worldFV[1], worldFV[2]);
+			GLint r1, r2;
+			//get the world coordinates from the screen coordinates
+			r1 = gluUnProject(winX, winY, 1, modelview, projection, viewport, &worldCV[0], &worldCV[1], &worldCV[2]);
+			r2 = gluUnProject(winX, winY, -1, modelview, projection, viewport, &worldFV[0], &worldFV[1], &worldFV[2]);
+			printf("\n%f %f %f", worldCV[0], worldCV[1], worldCV[2]);
+			printf("\n%f %f %f", worldFV[0], worldFV[1], worldFV[2]);
 
-		GLfloat wPos[] = { (GLfloat)worldCV[0], (GLfloat)worldCV[1], (GLfloat)worldCV[2] };
-		GLfloat* dir = unitfyVector(p2pVec<GLdouble, GLfloat>(worldCV, worldFV));
+			GLfloat wPos[] = { (GLfloat)worldCV[0], (GLfloat)worldCV[1], (GLfloat)worldCV[2] };
+			GLfloat* dir = unitfyVector(p2pVec<GLdouble, GLfloat>(worldCV, worldFV));
 
-		//std::list< std::pair<int, int> > intersections;
-		printf("\n");
-		for (int i = 0; i < play.genSize; i++){
-			GLfloat* pPos = polys[i].getPos();
-			GLfloat r = distance(p2pVec<GLfloat, GLfloat>(pPos, polys[i].getCPos()));
+			//std::list< std::pair<int, int> > intersections;
+			printf("\n");
+			for (int i = 0; i < play.genSize; i++){
+				GLfloat* pPos = polys[i].getPos();
+				GLfloat r = distance(p2pVec<GLfloat, GLfloat>(pPos, polys[i].getCPos()));
 
-			int d = rayIntersectsSphere(wPos, dir, r, polys[i].getCPos());
-			printf("%i:%i ", i, d);
-			if (d>-1){
-				//intersections.emplace_back(d, i);
-				Inspect(play.currentGen[i]);
-				break;
+				int d = rayIntersectsSphere(wPos, dir, r, polys[i].getCPos());
+				printf("%i:%i ", i, d);
+				if (d > -1){
+					//intersections.emplace_back(d, i);
+					Inspect(play.currentGen[i]);
+					break;
+				}
 			}
 		}
 	}

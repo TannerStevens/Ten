@@ -10,7 +10,7 @@
 class Inspector{
 private:
 public:
-	int winID, step = -1, *lBoard, *pieces, pieceCount;
+	int winID, step = -1, *lBoard, *pieces, pieceCount, bObj;
 	GLuint bgTexture;
 	TetrisSim ts;
 	OBJLoader tpBase;

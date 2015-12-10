@@ -42,7 +42,7 @@ public:
 	GLfloat* vList;			//Vertex List, size nV*3
 	GLfloat* vnList;		//Normal List, size nVn*3
 	int nV, nVn;			//Number of Vertices and Normals stored by vList and vnList
-	int mX, mY, mZ;			//Absolute distance of the Furthest Vertex stored in the OBJ File for each Axis
+	float mX, mY, mZ;			//Absolute distance of the Furthest Vertex stored in the OBJ File for each Axis
 	std::list<Object> objects;
 
 	OBJLoader();

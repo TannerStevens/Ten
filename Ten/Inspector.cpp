@@ -36,8 +36,9 @@ Inspector::Inspector(TetrisSim ts){
 	this->ts = ts;
 	this->pieces = (int *)calloc(ceil(ts.getBoardWidth()*ts.getBoardHeight()), sizeof(int));
 	this->pieceCount = 0;
+	this->bObj = false;
 	this->lBoard = ts.getBoardState();
-	this->tpBase = OBJLoader("tetrisbase.obj");
+	this->tpBase = OBJLoader("dodecahedron.obj");
 	this->winID = glutCreateWindow("Inspector");
 
 	glutDisplayFunc(display_inspector);
@@ -127,7 +128,7 @@ void Inspector::display(void){
 	glEnable(GL_LIGHTING);
 
 	glScaled(transformations[6] / (GLfloat)ts.getBoardWidth(), transformations[7] / (GLfloat)ts.getBoardHeight(), transformations[8] / (GLfloat)ts.getBoardHeight());
-	glTranslated(-(ts.getBoardWidth()/2) + transformations[0], -ts.getBoardHeight() + transformations[1], 0);
+	glTranslated(-(ts.getBoardWidth() / 2) + transformations[0], -ts.getBoardHeight() + transformations[1], transformations[2]);
 	glRotated(transformations[5], 0, 0, 1);
 	glRotated(transformations[4], 0, 1, 0);
 	glRotated(transformations[3], 1, 0, 0);
@@ -140,8 +141,14 @@ void Inspector::display(void){
 				//tpBase.draw(w,y-h,0);
 				glPushMatrix();
 				glTranslatef(w, y - h, 0);
-				glScalef(.35, .35, .35);
-				glutSolidDodecahedron();
+				if (bObj){
+					glScalef(.55, .55, .55);
+					tpBase.draw();
+				}
+				else {
+					glScalef(.35, .35, .35);
+					glutSolidDodecahedron();
+				}
 				glPopMatrix();
 			}
 		}
@@ -162,6 +169,7 @@ void Inspector::display(void){
 
 void Inspector::keyboard(unsigned char key, int x, int y){
 	if (key == ' ') nextStep();
+	else if (key == '/') bObj = !bObj;
 	else if (key == 'w') this->transformations[1] += .1;
 	else if (key == 's') this->transformations[1] -= .1;
 	else if (key == 'a') this->transformations[0] -= .1;
