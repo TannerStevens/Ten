@@ -244,6 +244,9 @@ int* TetrisSim::getBoardState(){
 }
 int TetrisSim::getCurrentPiece(){ return currentPiece; }
 int TetrisSim::getNPieces(){ return nPieces; }
+int TetrisSim::getCurrentPieceWidth(int rotation){
+	return Pieces[pieceOrder[currentPiece]].getPieceMatrix(rotation)->width;
+}
 
 int TetrisSim::addPiece(int i, int j){
 	if (currentPiece >= nPieces)return 0;

@@ -218,7 +218,7 @@ void Inspector::nextStep(){
 		p.Next(ts.getBoardWidth() - 1);
 	}
 	int i = r.Next(3);
-	int j = p.Next(ts.getBoardWidth() - 1);
+	int j = p.Next(ts.getBoardWidth() - ts.getCurrentPieceWidth(i));
 	int result = ts.addPiece(i,j);
 	ins.addToScore(result);
 

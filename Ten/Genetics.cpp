@@ -52,7 +52,7 @@ void Player::onlyEvaluate(){
 			int i, j;
 			i = 0; j = 0;
 			i = r->Next(3);
-			j = p->Next(ts.getBoardWidth() - 1);
+			j = p->Next(ts.getBoardWidth() - ts.getCurrentPieceWidth(i));
 			result = ts.addPiece(i, j);
 			currentGen[c].addToScore(result);
 		} while (result != 0);

@@ -54,6 +54,7 @@ public:
 
 	int getCurrentPiece();
 	int getNPieces();
+	int getCurrentPieceWidth(int rotation);
 
 	int getBoardWidth();
 	int getBoardHeight();
